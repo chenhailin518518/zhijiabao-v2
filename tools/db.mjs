@@ -8,13 +8,12 @@
 */
 import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
+import {
+  initDatabase, tableStats, many, one, MYSQL_CONFIG, closePool
+} from "../server/db.mjs";
 
 const action = (process.argv[2] || "inspect").toLowerCase();
 const root = resolve(import.meta.dirname, "..");
-
-const {
-  initDatabase, tableStats, many, one, MYSQL_CONFIG, closePool
-} = await import(join(root, "server", "db.mjs"));
 
 function printConnection() {
   console.log(`连接：${MYSQL_CONFIG.user}@${MYSQL_CONFIG.host}:${MYSQL_CONFIG.port}/${MYSQL_CONFIG.database}`);
