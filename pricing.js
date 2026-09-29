@@ -215,41 +215,87 @@
   }
 
   /* =========================
-     发布表单校验（与后端 validateProduct 同规则，用于即时反馈）
+     发布表单校验
+     前端即时反馈与服务端权威校验共用这一份规则，返回
+       { valid, errors: [{ field, message }], value }
+       - 前端用 errors 的 field 定位输入框、message 提示用户
+       - 服务端把 errors 映射为消息字符串返回，并用归一化后的 value 直接落库
+     选项：
+       partial        只校验传入的字段（PATCH 局部更新），value 也只含传入字段
+       requireImages  是否强制至少一张实拍图，默认跟随 partial（局部更新不要求）
      ========================= */
   const SENSITIVE_WORDS = [
     "赌博", "刷单", "高仿", "假货", "违禁", "代开发票", "枪支", "管制刀具",
     "色情", "贷款套现", "私接微商", "站外交易", "加微信转账"
   ];
 
-  function validateProduct(input = {}, { requireImages = true } = {}) {
+  function validateProduct(input = {}, { partial = false, requireImages = !partial } = {}) {
     const errors = [];
-    const name = String(input.name || "").trim();
-    if (name.length < 2 || name.length > 40) errors.push({ field: "name", message: "商品名称需为 2-40 个字符" });
-    if (!input.scenic) errors.push({ field: "scenic", message: "请选择景区来源" });
-    if (!input.category) errors.push({ field: "category", message: "请选择商品品类" });
-    if (!input.condition) errors.push({ field: "condition", message: "请选择品相" });
+    const out = {};
+    const has = (k) => input[k] !== undefined && input[k] !== null;
 
-    const price = Number(input.price);
-    if (!Number.isFinite(price) || price < 1 || price > 100000) errors.push({ field: "price", message: "期望价需在 1-100000 元之间" });
-    const original = Number(input.original);
-    if (!Number.isFinite(original) || original < 1 || original > 200000) errors.push({ field: "original", message: "原价需在 1-200000 元之间" });
-    if (Number.isFinite(price) && Number.isFinite(original) && price > original * 1.2) {
-      errors.push({ field: "price", message: `期望价不应高于原价的 120%（当前上限 ¥${Math.round(original * 1.2)}）` });
+    /* 字典不可用时退化为“只判非空”，避免因 site-data 未加载而误报全部非法 */
+    const D = data();
+    const inList = (list, v) => (list.length === 0 ? Boolean(v) : list.includes(v));
+    const SCENIC_IDS = (D?.SCENICS || []).map((s) => s.id);
+    const CATEGORY_NAMES = D?.CATEGORIES || [];
+    const CONDITION_VALUES = (D?.CONDITIONS || []).map((c) => c.value);
+
+    if (has("name") || !partial) {
+      const name = String(input.name || "").trim();
+      if (name.length < 2 || name.length > 40) errors.push({ field: "name", message: "商品名称需为 2-40 个字符" });
+      out.name = name;
     }
-    const freight = input.freight === undefined || input.freight === "" ? 0 : Number(input.freight);
-    if (!Number.isFinite(freight) || freight < 0 || freight > 200) errors.push({ field: "freight", message: "运费需在 0-200 元之间" });
+    if (has("scenic") || !partial) {
+      if (!inList(SCENIC_IDS, input.scenic)) errors.push({ field: "scenic", message: "请选择有效的景区来源" });
+      out.scenic = input.scenic;
+    }
+    if (has("category") || !partial) {
+      if (!inList(CATEGORY_NAMES, input.category)) errors.push({ field: "category", message: "请选择有效的商品品类" });
+      out.category = input.category;
+    }
+    if (has("condition") || !partial) {
+      if (!inList(CONDITION_VALUES, input.condition)) errors.push({ field: "condition", message: "请选择有效的品相" });
+      out.condition = input.condition;
+    }
+    if (has("tag")) out.tag = String(input.tag || "").slice(0, 12);
+    else if (!partial) out.tag = "个人闲置";
+
+    const price = has("price") ? Number(input.price) : NaN;
+    if (has("price") || !partial) {
+      if (!Number.isFinite(price) || price < 1 || price > 100000) errors.push({ field: "price", message: "期望价需在 1-100000 元之间" });
+      out.price = Math.round(price);
+    }
+    const original = has("original") ? Number(input.original) : NaN;
+    if (has("original") || !partial) {
+      if (!Number.isFinite(original) || original < 1 || original > 200000) errors.push({ field: "original", message: "原价需在 1-200000 元之间" });
+      out.original = Math.round(original);
+    }
+    if (out.price && out.original && out.price > out.original * 1.2) {
+      errors.push({ field: "price", message: `期望价不应高于原价的 120%（当前上限 ¥${Math.round(out.original * 1.2)}）` });
+    }
+
+    if (has("freight")) {
+      const freight = Number(input.freight === "" ? 0 : input.freight);
+      if (!Number.isFinite(freight) || freight < 0 || freight > 200) errors.push({ field: "freight", message: "运费需在 0-200 元之间" });
+      out.freight = Math.round(freight);
+    } else if (!partial) out.freight = 0;
 
     const description = String(input.description || "").trim();
     if (description.length > 300) errors.push({ field: "description", message: "品相说明不能超过 300 字" });
-    const images = Array.isArray(input.images) ? input.images : [];
-    if (requireImages && images.length === 0) errors.push({ field: "images", message: "请至少上传一张商品实拍图" });
-    if (images.length > 6) errors.push({ field: "images", message: "最多上传 6 张图片" });
+    if (has("description") || !partial) out.description = description;
 
-    const hit = SENSITIVE_WORDS.filter((w) => `${name} ${description} ${input.tag || ""}`.includes(w));
+    const images = Array.isArray(input.images) ? input.images : [];
+    if (has("images") || !partial) {
+      if (requireImages && images.length === 0) errors.push({ field: "images", message: "请至少上传一张商品实拍图" });
+      if (images.length > 6) errors.push({ field: "images", message: "最多上传 6 张图片" });
+      out.images = images.slice(0, 6);
+    }
+
+    const hit = SENSITIVE_WORDS.filter((w) => `${out.name || ""} ${out.description || ""} ${out.tag || ""}`.includes(w));
     if (hit.length) errors.push({ field: "name", message: `内容包含平台禁售或违规词：${hit.join("、")}` });
 
-    return { valid: errors.length === 0, errors };
+    return { valid: errors.length === 0, errors, value: out };
   }
 
   const money = (n) => `¥${Number(n || 0).toLocaleString("zh-CN")}`;

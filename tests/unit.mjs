@@ -183,6 +183,35 @@ test("发布校验：必填、长度、价格与图片规则", () => {
   assert.equal(P.validateProduct({ ...base, images: [] }, { requireImages: false }).valid, true, "非发布场景可不要求图片");
 });
 
+test("发布校验：归一化后的 value 与服务端 partial 语义", () => {
+  const base = {
+    name: "故宫纪念书签", scenic: "故宫博物院", category: "书签",
+    condition: "全新", price: 20, original: 30, description: "全新未拆", images: ["/uploads/a.png"]
+  };
+
+  /* 非 partial：补齐默认值、trim、图片截断，服务端直接拿 value 落库 */
+  const full = P.validateProduct({ ...base, name: "  故宫纪念书签  ", images: ["1", "2", "3", "4", "5", "6", "7"] });
+  assert.equal(full.value.name, "故宫纪念书签", "名称应去掉首尾空白");
+  assert.equal(full.value.tag, "个人闲置", "未传标签应补默认值");
+  assert.equal(full.value.freight, 0, "未传运费应补 0");
+  assert.equal(full.value.images.length, 6, "超过 6 张应截断到 6 张");
+  assert.deepEqual(Object.keys(full.value).sort(), [
+    "category", "condition", "description", "freight", "images", "name", "original", "price", "scenic", "tag"
+  ]);
+
+  /* partial：只校验并返回传入字段（PATCH 局部更新） */
+  const patch = P.validateProduct({ price: 30 }, { partial: true });
+  assert.equal(patch.valid, true);
+  assert.deepEqual(Object.keys(patch.value), ["price"]);
+  assert.equal(P.validateProduct({ price: 0 }, { partial: true }).valid, false, "局部更新仍要校验取值范围");
+  assert.equal(P.validateProduct({}, { partial: true }).valid, true, "局部更新不强制必填");
+
+  /* 字典外取值应被拒绝，而不是只判非空 */
+  assert.equal(P.validateProduct({ ...base, scenic: "西湖" }).valid, false, "景区必须是 8 个景区之一");
+  assert.equal(P.validateProduct({ ...base, category: "零食" }).valid, false, "品类必须在字典内");
+  assert.equal(P.validateProduct({ ...base, condition: "7成新" }).valid, false, "品相必须在字典内");
+});
+
 test("敏感词表覆盖站外交易与违禁内容", () => {
   assert.ok(P.SENSITIVE_WORDS.includes("加微信转账"));
   assert.ok(P.SENSITIVE_WORDS.includes("刷单"));

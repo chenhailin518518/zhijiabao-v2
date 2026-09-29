@@ -146,65 +146,8 @@ const CATEGORIES = SD.CATEGORIES;
 const CONDITIONS = SD.CONDITIONS.map((c) => c.value);
 const PRODUCT_STATUS = ["待审核", "在售", "交易中", "已售出", "已下架"];
 const ORDER_FLOW = P.ORDER_FLOW;
-function validateProduct(input, { partial = false } = {}) {
-  const errors = [];
-  const out = {};
-  const has = (k) => input[k] !== undefined && input[k] !== null;
-
-  if (has("name") || !partial) {
-    const name = String(input.name || "").trim();
-    if (name.length < 2 || name.length > 40) errors.push("商品名称需为 2-40 个字符");
-    out.name = name;
-  }
-  if (has("scenic") || !partial) {
-    if (!SCENICS.includes(input.scenic)) errors.push("请选择有效的景区来源");
-    out.scenic = input.scenic;
-  }
-  if (has("category") || !partial) {
-    if (!CATEGORIES.includes(input.category)) errors.push("请选择有效的商品品类");
-    out.category = input.category;
-  }
-  if (has("condition") || !partial) {
-    if (!CONDITIONS.includes(input.condition)) errors.push("请选择有效的品相");
-    out.condition = input.condition;
-  }
-  if (has("tag")) out.tag = String(input.tag || "").slice(0, 12);
-  else if (!partial) out.tag = "个人闲置";
-
-  const price = has("price") ? Number(input.price) : NaN;
-  if (has("price") || !partial) {
-    if (!Number.isFinite(price) || price < 1 || price > 100000) errors.push("期望价需在 1-100000 元之间");
-    out.price = Math.round(price);
-  }
-  const original = has("original") ? Number(input.original) : NaN;
-  if (has("original") || !partial) {
-    if (!Number.isFinite(original) || original < 1 || original > 200000) errors.push("原价需在 1-200000 元之间");
-    out.original = Math.round(original);
-  }
-  if (out.price && out.original && out.price > out.original * 1.2) {
-    errors.push("期望价不应显著高于原价（允许上浮 20%）");
-  }
-  if (has("freight")) {
-    const freight = Number(input.freight);
-    if (!Number.isFinite(freight) || freight < 0 || freight > 200) errors.push("运费需在 0-200 元之间");
-    out.freight = Math.round(freight);
-  } else if (!partial) out.freight = 0;
-
-  const description = String(input.description || "").trim();
-  if (description.length > 300) errors.push("品相说明不能超过 300 字");
-  if (has("description") || !partial) out.description = description;
-
-  const images = Array.isArray(input.images) ? input.images.slice(0, 6) : [];
-  if (has("images") || !partial) {
-    if (!partial && images.length === 0) errors.push("请至少上传一张商品实拍图");
-    out.images = images;
-  }
-
-  const hit = findSensitive(`${out.name || ""} ${out.description || ""} ${out.tag || ""}`);
-  if (hit.length) errors.push(`内容包含平台禁售或违规词：${hit.join("、")}`);
-
-  return { errors, value: out };
-}
+/* 发布校验只有一份实现：复用前端同一模块（规则见 pricing.js），避免前后端漂移 */
+const validateProduct = P.validateProduct;
 /* =========================
    价格走势：直接复用共享纯模块，响应中仍明确标注 simulated
    ========================= */
@@ -550,7 +493,7 @@ route("POST", "/api/products", async (ctx) => {
   if (!ctx.user) return fail(ctx.res, 401, "请先登录后再发布闲置");
   if (!rateLimit(`product:${ctx.user.id}`, 5, 60000)) return fail(ctx.res, 429, "发布过于频繁，请稍后再试");
   const { errors, value } = validateProduct(ctx.body);
-  if (errors.length) return fail(ctx.res, 400, errors[0], { errors });
+  if (errors.length) return fail(ctx.res, 400, errors[0].message, { errors: errors.map((e) => e.message) });
   const id = uid("p");
   await run(`INSERT INTO \`products\` (id, owner_id, name, scenic, category, \`condition\`, tag, price, original, freight,
       description, images, heat, retention, views, status, seller_name, source, created_at)
@@ -570,7 +513,7 @@ route("PATCH", "/api/products/:id", async (ctx) => {
   if (row.owner_id !== ctx.user.id && !ctx.user.is_admin) return fail(ctx.res, 403, "只能修改自己发布的商品");
   if (row.status === "交易中") return fail(ctx.res, 400, "交易中的商品不能修改");
   const { errors, value } = validateProduct(ctx.body, { partial: true });
-  if (errors.length) return fail(ctx.res, 400, errors[0], { errors });
+  if (errors.length) return fail(ctx.res, 400, errors[0].message, { errors: errors.map((e) => e.message) });
   const fields = Object.keys(value);
   if (!fields.length) return fail(ctx.res, 400, "没有需要更新的字段");
   const sets = fields.map((f) => `\`${f}\` = ?`).join(", ");
