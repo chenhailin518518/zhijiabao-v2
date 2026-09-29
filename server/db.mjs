@@ -9,6 +9,8 @@ import { createPool } from "mysql2/promise";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { randomBytes, scryptSync, timingSafeEqual, randomUUID } from "node:crypto";
+/* 敏感词表与前端共用同一份实现，避免两端词库漂移 */
+import "../pricing.js";
 
 const here = import.meta.dirname;
 const SQL_DIR = join(here, "sql");
@@ -159,10 +161,7 @@ export function verifyPassword(password, stored) {
 /* =========================
    内容安全
    ========================= */
-export const SENSITIVE_WORDS = [
-  "赌博", "刷单", "高仿", "假货", "违禁", "代开发票", "枪支", "管制刀具",
-  "色情", "贷款套现", "私接微商", "站外交易", "加微信转账"
-];
+export const SENSITIVE_WORDS = globalThis.ZhijiabaoPricing.SENSITIVE_WORDS;
 
 export function findSensitive(text) {
   const body = String(text || "");

@@ -8,6 +8,15 @@ import {
   audit, notify, verifyPassword, maskIdNo, recalcCredit, uid,
   one, many, run, transaction, initDatabase, tableStats, MYSQL_CONFIG
 } from "./db.mjs";
+/*
+  字典与业务规则只有一份实现：直接复用前端同一套纯模块（无 DOM 依赖，Node 可直接加载）。
+  过去服务端各自维护 SCENICS / CATEGORIES / ORDER_FLOW / priceHistory 副本，
+  改动共享字典后服务端不会同步（例如新增品类会被服务端拒绝），故统一到此处引用。
+*/
+import "../site-data.js";
+import "../pricing.js";
+const SD = globalThis.ZhijiabaoData;
+const P = globalThis.ZhijiabaoPricing;
 
 const ROOT = resolve(import.meta.dirname, "..");
 /* 上传文件落盘目录（与数据库无关，默认 server/uploads，可用 UPLOAD_DIR 覆盖） */
@@ -131,25 +140,12 @@ function publicUser(user) {
 /* =========================
    业务校验
    ========================= */
-const SCENICS = [
-  "故宫博物院", "杭州西湖", "敦煌莫高窟", "黄山风景区",
-  "平遥古城", "武夷山", "大雁塔", "丽江古城"
-];
-const CATEGORIES = [
-  "纪念徽章", "书签", "明信片", "扇子", "杯子茶具",
-  "非遗手作", "摆件", "茶叶食品", "服饰配件", "其他"
-];
-const CONDITIONS = ["全新", "95新", "9成新", "8成新"];
+/* 以下均来自共享字典，服务端不再保留副本 */
+const SCENICS = SD.SCENICS.map((s) => s.id);
+const CATEGORIES = SD.CATEGORIES;
+const CONDITIONS = SD.CONDITIONS.map((c) => c.value);
 const PRODUCT_STATUS = ["待审核", "在售", "交易中", "已售出", "已下架"];
-const ORDER_FLOW = {
-  "待付款": ["待发货", "已取消"],
-  "待发货": ["待收货", "售后中"],
-  "待收货": ["已完成", "售后中"],
-  "已完成": ["售后中"],
-  "售后中": ["已完成", "已退款"],
-  "已取消": [],
-  "已退款": []
-};
+const ORDER_FLOW = P.ORDER_FLOW;
 function validateProduct(input, { partial = false } = {}) {
   const errors = [];
   const out = {};
@@ -210,31 +206,9 @@ function validateProduct(input, { partial = false } = {}) {
   return { errors, value: out };
 }
 /* =========================
-   价格走势（确定性生成的演示数据，响应中明确标注 simulated）
+   价格走势：直接复用共享纯模块，响应中仍明确标注 simulated
    ========================= */
-function priceHistory(product, days = 30) {
-  let seed = 7;
-  for (const ch of product.id) seed = (seed * 31 + ch.charCodeAt(0)) % 9973;
-  const base = product.original || product.price;
-  const series = [];
-  for (let i = days - 1; i >= 0; i--) {
-    seed = (seed * 1103515245 + 12345) % 2147483648;
-    const drift = ((seed % 19) - 9) / 100;
-    const date = toMysqlTime(new Date(Date.now() - i * 86400000)).slice(0, 10);
-    series.push({ date, price: Math.max(5, Math.round(product.price * (1 + drift))) });
-  }
-  series[series.length - 1].price = product.price;
-  const prices = series.map((p) => p.price);
-  return {
-    simulated: true,
-    source: "演示数据（按商品基准价确定性生成，非真实成交记录）",
-    days,
-    low: Math.min(...prices),
-    high: Math.max(...prices),
-    avg: Math.round(prices.reduce((a, b) => a + b, 0) / prices.length),
-    series
-  };
-}
+const priceHistory = P.priceHistory;
 async function productView(row, { withDetail = false, viewer = null } = {}) {
   if (!row) return null;
   const owner = row.owner_id ? await one("SELECT id, nickname, credit, avatar, city FROM users WHERE id = ?", row.owner_id) : null;
