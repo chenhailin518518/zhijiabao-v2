@@ -1,8 +1,8 @@
 {
   "name": "zhijiabao",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "private": true,
-  "description": "智价宝 - 景区文创闲置流转平台（静态站点 + 零依赖 Node 后端，Node >= 22）",
+  "description": "智价宝 - 景区文创闲置流转平台（MySQL 8 + Node 后端 + 原生前端）",
   "type": "commonjs",
   "engines": {
     "node": ">=22"
@@ -15,20 +15,26 @@
     "test:smoke": "node tests/smoke.mjs",
     "test:api": "node tests/api.mjs",
     "test:dom": "node tests/dom.mjs",
+    "db:init": "node tools/db.mjs init",
+    "db:reset": "node tools/db.mjs reset",
+    "db:inspect": "node tools/db.mjs inspect",
+    "seed:demo": "node tools/seed-demo.mjs",
     "mirror": "node tools/sync-mirrors.mjs",
     "optimize:images": "python tools/optimize-images.py",
-    "reset:data": "node tools/reset-data.mjs",
-    "inspect:data": "node tools/inspect-data.mjs",
-    "export:demo": "node tools/export-demo-data.mjs"
+    "hash:password": "node tools/hash-password.mjs"
   },
   "keywords": [
     "景区文创",
     "闲置流转",
     "AI估价",
     "担保交易",
+    "MySQL",
     "数字媒体竞赛"
   ],
   "license": "MIT",
+  "dependencies": {
+    "mysql2": "^3.24.4"
+  },
   "devDependencies": {
     "jsdom": "^26.1.0"
   }

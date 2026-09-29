@@ -86,7 +86,7 @@
     badge.innerHTML = online
       ? '<span class="dot"></span>已连接服务端 · 数据多设备共享'
       : '<span class="dot"></span>本地演示模式 · 数据仅存本机（启动 npm start 可切换为服务端模式）';
-    badge.title = online ? "当前连接 Node 后端，商品 / 订单 / 用户数据保存在 SQLite" : "未检测到后端服务，已自动降级为浏览器本地存储";
+    badge.title = online ? "当前连接 Node 后端，商品 / 订单 / 用户数据保存在 MySQL 数据库" : "未检测到后端服务，已自动降级为浏览器本地存储";
   }
   App.renderModeBadge = renderModeBadge;
 

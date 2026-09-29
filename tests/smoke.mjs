@@ -141,6 +141,17 @@ const appAccount = read("app-account.js");
 assert.match(appCore, /D\.SCENICS\.map/, "景区下拉应由 D.SCENICS 动态生成，禁止再硬编码 5 个景区");
 assert.doesNotMatch(appAccount, /<option>故宫博物院<\/option>/, "集市发布表单不应硬编码景区选项");
 
+/* --- 数据层：必须是 MySQL 实现，且 SQL 脚本与配置示例齐备 --- */
+for (const file of ["server/db.mjs", "server/server.mjs"]) {
+  assert.doesNotMatch(read(file), /node:sqlite/, `${file} 不应再依赖 SQLite`);
+}
+assert.match(read("server/db.mjs"), /mysql2\/promise/, "server/db.mjs 应通过 mysql2 连接 MySQL");
+assert.ok(existsSync(join(ROOT, "server", "sql", "schema.sql")), "缺少 MySQL 建表脚本 server/sql/schema.sql");
+assert.ok(existsSync(join(ROOT, "server", "sql", "seed.sql")), "缺少 MySQL 初始数据脚本 server/sql/seed.sql");
+assert.ok(existsSync(join(ROOT, ".env.example")), "缺少环境配置示例 .env.example");
+assert.match(read(".env.example"), /MYSQL_HOST/, ".env.example 应说明 MySQL 连接配置");
+assert.match(read("package.json"), /"db:init"/, "package.json 应提供 db:init 脚本");
+
 /* --- 图片资源：引用必须存在，且单张体积受控（历史缺陷：首屏 4MB 图片） --- */
 const referencedImages = new Set();
 for (const content of [read("site-data.js"), styles, read("app-core.js")]) {

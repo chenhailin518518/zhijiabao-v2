@@ -1,7 +1,7 @@
 /*
   智价宝 - 前端数据层
   同一套调用方式适配两种运行环境：
-    online  启动 `npm start` 后连接 Node 后端（数据落 SQLite，多设备共享）
+    online  启动 `npm start` 后连接 Node 后端（数据落 MySQL，多设备共享）
     offline 纯静态托管（GitHub Pages 等）自动降级为浏览器本地存储，功能语义保持一致
   页面代码只需要 `await Store.api(...)`，不需要关心当前模式。
 */

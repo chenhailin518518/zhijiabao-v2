@@ -1,12 +1,10 @@
 node_modules/
 
-# 运行时数据不进仓库
-server/data/*.db
-server/data/*.db-wal
-server/data/*.db-shm
-server/data/uploads/
-# 但演示快照要随仓库发布（由 tools/export-demo-data.mjs 生成）
-!server/data/demo-seed.db
+# 环境配置（含数据库密码）与运行时数据
+.env
+.env.local
+server/uploads/
+server/data/
 
 .DS_Store
 Thumbs.db
