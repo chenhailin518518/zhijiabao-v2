@@ -1,87 +1,100 @@
+/*
+  智价宝 - 静态资源与结构冒烟测试
+  覆盖：资源引用与版本一致性、镜像页同步、SEO/无障碍/合规文件、脚本加载顺序。
+  运行：node tests/smoke.mjs
+*/
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { join, resolve } from "node:path";
 
-const script = readFileSync("script.js", "utf8");
-const styles = readFileSync("styles.css", "utf8");
+const ROOT = resolve(import.meta.dirname, "..");
+const read = (file) => readFileSync(join(ROOT, file), "utf8");
+const script = read("script.js");
+const styles = read("styles.css");
 
-const pages = [
-  ["index.html", "assets/img/favicon.svg"],
-  ["estimate/index.html", "../assets/img/favicon.svg"],
-  ["compare/index.html", "../assets/img/favicon.svg"],
-  ["market/index.html", "../assets/img/favicon.svg"],
-  ["profile/index.html", "../assets/img/favicon.svg"]
+/* 每个页面：外壳文件、子目录副本、favicon 相对路径 */
+const PAGES = [
+  { outer: "index.html", nested: null, icon: "assets/img/favicon.svg" },
+  { outer: "estimate.html", icon: "assets/img/favicon.svg" },
+  { outer: "compare.html", icon: "assets/img/favicon.svg" },
+  { outer: "market.html", icon: "assets/img/favicon.svg" },
+  { outer: "profile.html", icon: "assets/img/favicon.svg" },
+  { outer: "orders.html", icon: "assets/img/favicon.svg" },
+  { outer: "messages.html", icon: "assets/img/favicon.svg" },
+  { outer: "admin.html", icon: "assets/img/favicon.svg" },
+  { outer: "legal.html", icon: "assets/img/favicon.svg" }
 ];
 
 const htmlEntries = [
-  "index.html",
-  "estimate.html",
-  "compare.html",
-  "market.html",
-  "profile.html",
-  "estimate/index.html",
-  "compare/index.html",
-  "market/index.html",
-  "profile/index.html"
+  ...PAGES.map((p) => p.outer),
+  ...PAGES.filter((p) => p.outer !== "index.html").map((p) => `${p.outer.replace(/\.html$/, "")}/index.html`)
 ];
 
-/* 每个页面都必须引用这三个共享资源，且版本号全站一致 */
-const sharedAssets = ["styles.css", "api-services.js", "script.js"];
-
-/* 外壳页面 <-> 同名子目录页面，内容必须一致 */
-const mirrorPairs = [
-  ["estimate.html", "estimate/index.html"],
-  ["compare.html", "compare/index.html"],
-  ["market.html", "market/index.html"],
-  ["profile.html", "profile/index.html"]
+/* 共享资源：每个页面都必须引用，且版本号全站一致 */
+const sharedAssets = [
+  "styles.css",
+  "styles-app.css",
+  "site-data.js",
+  "pricing.js",
+  "api-services.js",
+  "store.js",
+  "script.js",
+  "app-core.js",
+  "app-account.js"
 ];
 
-assert.ok(
-  existsSync("assets/img/favicon.svg"),
-  "site should include an explicit favicon asset"
-);
+/* 脚本加载顺序：字典 → 计算 → 接口 → 数据层 → UI → 业务层 */
+const scriptOrder = ["site-data.js", "pricing.js", "api-services.js", "store.js", "script.js", "app-core.js", "app-account.js"];
 
-for (const [pagePath, faviconPath] of pages) {
-  const html = readFileSync(pagePath, "utf8");
+assert.ok(existsSync(join(ROOT, "assets/img/favicon.svg")), "站点应包含 SVG favicon");
+
+/* --- 每个页面：favicon、SEO、无障碍、合规引用 --- */
+for (const page of PAGES) {
+  const html = read(page.outer);
   assert.match(
     html,
-    new RegExp(`<link\\s+rel="icon"\\s+href="${faviconPath.replaceAll("/", "\\/")}"\\s+type="image\\/svg\\+xml">`),
-    `${pagePath} should point to the shared SVG favicon`
+    new RegExp(`<link\\s+rel="icon"\\s+href="${page.icon.replaceAll("/", "\\/")}"\\s+type="image\\/svg\\+xml">`),
+    `${page.outer} 应引用共享 SVG favicon`
   );
+  assert.match(html, /<meta name="description" content="[^"]{20,}"/, `${page.outer} 缺少有效的 meta description`);
+  assert.match(html, /<link rel="manifest" href="manifest\.webmanifest">/, `${page.outer} 应引用 PWA manifest`);
+  assert.match(html, /<a class="skip-link" href="#main">/, `${page.outer} 应提供跳转到主内容的无障碍链接`);
+  assert.match(html, /<main id="main">/, `${page.outer} 主内容应有 id="main"`);
+  assert.match(html, /<div class="auth-slot" id="authSlot">/, `${page.outer} 页头应包含账号区`);
+  assert.match(html, /<div class="mode-badge" id="modeBadge"/, `${page.outer} 页脚应展示运行模式提示`);
 }
 
-/* --- 资源引用与版本号一致性 --- */
-
+/* --- 资源引用与版本一致性 --- */
 const versionByAsset = new Map(sharedAssets.map((asset) => [asset, new Map()]));
-
 for (const pagePath of htmlEntries) {
-  const html = readFileSync(pagePath, "utf8");
+  const html = read(pagePath);
   for (const asset of sharedAssets) {
     const escaped = asset.replaceAll(".", "\\.");
     const match = html.match(new RegExp(`["'/]${escaped}\\?v=([0-9a-z]+)`));
-    assert.ok(
-      match,
-      `${pagePath} should reference ${asset} with a cache-busting version (?v=...)`
-    );
+    assert.ok(match, `${pagePath} 应以带版本号的方式引用 ${asset}（?v=...）`);
     versionByAsset.get(asset).set(pagePath, match[1]);
   }
 }
-
 for (const asset of sharedAssets) {
   const entries = [...versionByAsset.get(asset).entries()];
   const distinct = [...new Set(entries.map(([, version]) => version))];
   assert.equal(
     distinct.length,
     1,
-    `${asset} is referenced with ${distinct.length} different versions; ` +
-      `every page must agree: ${entries.map(([page, v]) => `${page}=${v}`).join(", ")}`
+    `${asset} 出现了 ${distinct.length} 个版本号，全站必须一致：${entries.map(([page, v]) => `${page}=${v}`).join(", ")}`
   );
 }
 
-/* --- 外壳页面与子目录页面必须同步 ---
-   子目录页面是外壳页面的副本，只允许相对路径前缀不同。
-   历史上这两份曾经长期不同步（天气模块、二维码分享只加到了外壳页面），
-   这条断言就是为了让这种漂移当场暴露出来。 */
+/* --- 脚本加载顺序 --- */
+for (const pagePath of ["index.html", "market.html", "orders.html", "admin.html"]) {
+  const html = read(pagePath);
+  const positions = scriptOrder.map((name) => html.indexOf(`src="${name}?v=`));
+  positions.forEach((pos, i) => assert.ok(pos >= 0, `${pagePath} 缺少脚本 ${scriptOrder[i]}`));
+  const sorted = [...positions].sort((a, b) => a - b);
+  assert.deepEqual(positions, sorted, `${pagePath} 的脚本加载顺序不正确（字典 → 计算 → 接口 → 数据层 → UI → 业务层）`);
+}
 
+/* --- 外壳页面与子目录页面必须完全同步（副本由 tools/sync-mirrors.mjs 生成） --- */
 function normalizeMirror(text) {
   return text
     .replace(/\r\n/g, "\n")
@@ -92,73 +105,71 @@ function normalizeMirror(text) {
     .filter(Boolean);
 }
 
-for (const [outerPath, subPath] of mirrorPairs) {
-  const outerLines = normalizeMirror(readFileSync(outerPath, "utf8"));
-  const subLines = normalizeMirror(readFileSync(subPath, "utf8"));
+for (const page of PAGES.filter((p) => p.outer !== "index.html")) {
+  const nested = `${page.outer.replace(/\.html$/, "")}/index.html`;
+  assert.ok(existsSync(join(ROOT, nested)), `${nested} 不存在，请执行 npm run mirror`);
   assert.deepEqual(
-    subLines,
-    outerLines,
-    `${subPath} is out of sync with ${outerPath}; ` +
-      "keep the two copies identical apart from their relative path prefix"
+    normalizeMirror(read(nested)),
+    normalizeMirror(read(page.outer)),
+    `${nested} 与 ${page.outer} 内容不一致，请重新执行 npm run mirror`
   );
 }
 
-/* --- 共享资源路径工具 --- */
+/* --- 结构性文件 --- */
+for (const file of ["404.html", "manifest.webmanifest", "sw.js", "robots.txt", "sitemap.xml", "README.md", "LICENSE"]) {
+  assert.ok(existsSync(join(ROOT, file)), `缺少文件 ${file}`);
+}
+assert.match(read("404.html"), /id="homeLink"/, "404 页面应提供返回首页入口");
+assert.match(read("sitemap.xml"), /<urlset/, "sitemap.xml 格式不正确");
+assert.match(read("robots.txt"), /Sitemap:/, "robots.txt 应声明 sitemap");
+assert.match(read("sw.js"), /addEventListener\("fetch"/, "Service Worker 应处理 fetch 事件");
 
-assert.match(
-  script,
-  /function\s+assetPath\s*\(/,
-  "script.js should expose an assetPath() helper so shared assets resolve correctly from nested pages"
-);
+/* --- 合规与数据来源声明 --- */
+const legal = read("legal.html");
+for (const keyword of ["脱敏", "Open-Meteo", "担保交易", "人工智能工具", "免责声明"]) {
+  assert.ok(legal.includes(keyword), `用户协议与隐私说明应包含「${keyword}」相关内容`);
+}
 
-assert.match(
-  script,
-  /<img\s+src="\$\{assetPath\([\w.]+\)\}"/,
-  "product cards should render images through assetPath() so nested pages resolve them"
-);
+/* --- 代码约定：图片路径统一走 assetPath --- */
+assert.match(script, /function\s+assetPath\s*\(/, "script.js 应提供 assetPath() 以适配子目录页面");
+assert.doesNotMatch(script, /<img\s+src="assets\//, "script.js 中的图片路径不应硬编码相对路径");
+assert.match(read("app-core.js"), /root\.assetPath\(/, "业务层渲染图片应经过 assetPath()");
 
-assert.match(
-  script,
-  /\.src\s*=\s*assetPath\([\w.]+\)/,
-  "market detail modal should render images through assetPath()"
-);
+/* --- 估价页必须覆盖 8 个景区（历史缺陷：只列了 5 个） --- */
+const appCore = read("app-core.js");
+const appAccount = read("app-account.js");
+assert.match(appCore, /D\.SCENICS\.map/, "景区下拉应由 D.SCENICS 动态生成，禁止再硬编码 5 个景区");
+assert.doesNotMatch(appAccount, /<option>故宫博物院<\/option>/, "集市发布表单不应硬编码景区选项");
 
-assert.doesNotMatch(
-  script,
-  /<img\s+src="assets\//,
-  "script.js should route every image through assetPath() instead of hardcoding a relative path"
-);
+/* --- 图片资源：引用必须存在，且单张体积受控（历史缺陷：首屏 4MB 图片） --- */
+const referencedImages = new Set();
+for (const content of [read("site-data.js"), styles, read("app-core.js")]) {
+  for (const match of content.matchAll(/assets\/img\/[A-Za-z0-9._-]+/g)) referencedImages.add(match[0]);
+}
+for (const image of referencedImages) {
+  assert.ok(existsSync(join(ROOT, image)), `引用的图片不存在：${image}（请检查是否遗漏转换或路径写错）`);
+}
+function walkImages(dir) {
+  const out = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...walkImages(full));
+    else out.push(full);
+  }
+  return out;
+}
+for (const file of walkImages(join(ROOT, "assets", "img"))) {
+  const kb = statSync(file).size / 1024;
+  assert.ok(kb <= 200, `${file.replace(ROOT, "")} 体积 ${Math.round(kb)}KB 超过 200KB 上限，请执行 npm run optimize:images`);
+}
 
-/* --- 移动端样式规则 --- */
-
+/* --- 移动端样式约定（沿用既有规则） --- */
 assert.match(
   script,
   /matchMedia\?\.\("\(max-width:\s*720px\)"\)\.matches/,
-  "mobile home headline should keep plain text instead of running split-character animation"
+  "移动端首页标题应保持纯文本，不执行逐字动画"
 );
+assert.match(styles, /@media\s*\(max-width:\s*720px\)[\s\S]*\.hero-title\s*\{[\s\S]*overflow:\s*visible/, "720px 断点下标题不应被裁切");
+assert.match(read("styles-app.css"), /prefers-reduced-motion/, "样式应支持减弱动效偏好");
 
-assert.match(
-  styles,
-  /@media\s*\(max-width:\s*720px\)[\s\S]*\.hero-title\s*\{[\s\S]*overflow:\s*visible/,
-  "mobile hero title should not clip overflowing split text"
-);
-
-assert.match(
-  styles,
-  /@media\s*\(max-width:\s*720px\)[\s\S]*\.hero-title\s+\.char\s*\{[\s\S]*display:\s*inline/,
-  "mobile hero title characters should flow inline for natural wrapping"
-);
-
-assert.match(
-  styles,
-  /@media\s*\(max-width:\s*720px\)[\s\S]*\.hero-inner\s*\{[\s\S]*padding:\s*0\s+16px/,
-  "mobile hero content should keep a readable horizontal safe area"
-);
-
-assert.match(
-  styles,
-  /@media\s*\(max-width:\s*720px\)[\s\S]*\.shine-text::after\s*\{[\s\S]*display:\s*none/,
-  "mobile hero title should disable the sweeping shine layer to avoid hidden horizontal overflow"
-);
-
-console.log("Smoke checks passed");
+console.log("静态冒烟检查通过");

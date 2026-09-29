@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: 单元测试 / 静态检查 / 接口集成 / 页面 DOM
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ["22", "24"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 准备 Node ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: 安装开发依赖（仅 jsdom，用于页面 DOM 测试）
+        run: npm ci --no-audit --no-fund
+
+      - name: 纯逻辑单元测试
+        run: npm run test:unit
+
+      - name: 静态资源与结构检查
+        run: npm run test:smoke
+
+      - name: 后端接口集成测试
+        run: npm run test:api
+
+      - name: 页面 DOM 冒烟测试
+        run: npm run test:dom
+
+      - name: 校验镜像页与外壳页保持同步
+        run: |
+          npm run mirror
+          git diff --exit-code -- '*/index.html' || (echo "::error::镜像页未同步，请本地执行 npm run mirror 后提交" && exit 1)

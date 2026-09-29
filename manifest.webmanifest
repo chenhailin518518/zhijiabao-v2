@@ -1,0 +1,25 @@
+{
+  "name": "智价宝 - 景区文创闲置流转平台",
+  "short_name": "智价宝",
+  "description": "AI 估价 + 全网比价 + 担保交易的景区文创闲置流转平台",
+  "lang": "zh-CN",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f6f3ec",
+  "theme_color": "#2f3d3a",
+  "icons": [
+    {
+      "src": "assets/img/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    { "name": "AI 估价", "url": "./estimate/" },
+    { "name": "二手集市", "url": "./market/" },
+    { "name": "我的订单", "url": "./orders/" }
+  ]
+}

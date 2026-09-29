@@ -3,11 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>智价宝 - 景区文创闲置流转平台</title>
+  <title>智价宝 - 景区文创闲置流转平台 | AI 估价 · 全网比价 · 担保交易</title>
+  <meta name="description" content="智价宝是面向景区文创的闲置流转平台：上传图片即可获得可解释的 AI 估价，查到官方价与二手成交参考价，并通过平台担保交易把闲置文创流转给下一位旅行者。">
+  <meta name="keywords" content="景区文创,文创闲置,二手交易,AI估价,担保交易,非遗手作,数字媒体竞赛">
+  <meta name="theme-color" content="#2f3d3a">
+  <link rel="canonical" href="https://chenhailin518518.github.io/zhijiabao-demo/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="智价宝 - 景区文创闲置流转平台">
+  <meta property="og:description" content="AI 估价 + 全网比价 + 担保交易的景区文创闲置流转平台，覆盖 8 个景区、10 类文创商品。">
+  <meta property="og:url" content="https://chenhailin518518.github.io/zhijiabao-demo/">
+  <meta property="og:image" content="https://chenhailin518518.github.io/zhijiabao-demo/assets/img/hero-bg.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=20260918b">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css?v=20260929a">
+  <link rel="stylesheet" href="styles-app.css?v=20260929a">
 </head>
 <body data-page="home" class="skeleton-active">
+  <a class="skip-link" href="#main">跳到主要内容</a>
   <canvas id="particleCanvas" aria-hidden="true"></canvas>
   <div class="transition-mask" aria-hidden="true"></div>
   <div class="skeleton-screen" id="skeletonScreen" aria-hidden="true">
@@ -61,225 +74,152 @@
     </a>
     <nav class="main-nav" aria-label="主导航">
       <a class="nav-link active" href="./" data-transition><span>首页</span></a>
-      <a class="nav-link " href="estimate/" data-transition><span>AI智能估价</span></a>
-      <a class="nav-link " href="compare/" data-transition><span>全网比价</span></a>
-      <a class="nav-link " href="market/" data-transition><span>二手集市</span></a>
-      <a class="nav-link " href="profile/" data-transition><span>个人中心</span></a>
+      <a class="nav-link" href="estimate/" data-transition><span>AI智能估价</span></a>
+      <a class="nav-link" href="compare/" data-transition><span>全网比价</span></a>
+      <a class="nav-link" href="market/" data-transition><span>二手集市</span></a>
+      <a class="nav-link" href="orders/" data-transition><span>我的订单</span></a>
+      <a class="nav-link" href="profile/" data-transition><span>个人中心</span></a>
+      <a class="nav-link" href="admin/" data-transition><span>运营后台</span></a>
     </nav>
-    <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换深色国风主题" aria-pressed="false" title="切换主题">
-      <span class="theme-toggle-icon" aria-hidden="true">☾</span>
-    </button>
+    <div class="header-actions">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换深色国风主题" aria-pressed="false" title="切换主题">
+        <span class="theme-toggle-icon" aria-hidden="true">☾</span>
+      </button>
+      <div class="auth-slot" id="authSlot"></div>
+    </div>
   </header>
 
   <div class="page-shell">
-    <main>
+    <main id="main">
       <section class="hero">
         <div class="content hero-inner">
           <div class="hero-copy">
-            <div class="hero-badge reveal">AI定价 · 全网比价 · 文创闲置</div>
+            <div class="hero-badge reveal">AI 可解释估价 · 全网比价 · 平台担保交易</div>
             <h1 class="hero-title shine-text" data-split-text>让景区文创闲置重新被看见</h1>
-            <p class="hero-lead reveal">智价宝聚焦景区文创、纪念周边、特色文创衍生品领域，集成智能估价、透明比价、安全交易、商户库存盘活多重核心服务，构建景区文创闲置资源一站式流转服务平台。</p>
+            <p class="muted reveal">旅途中买下的文创，回家后常常被闲置。智价宝把「估价 — 比价 — 发布 — 担保交易 — 售后」做成一条完整链路：上传图片即可得到可解释的建议价，成交资金由平台托管，确认收货后才放款给卖家。</p>
             <div class="hero-actions reveal">
-              <a class="btn" href="estimate/" data-transition><span>查看估价</span></a>
-              <a class="btn secondary" href="market/" data-transition><span>浏览集市</span></a>
+              <a class="btn" href="estimate/" data-transition><span>立即 AI 估价</span></a>
+              <a class="btn ghost" href="market/" data-transition><span>逛逛二手集市</span></a>
             </div>
-            <div class="hero-metrics reveal">
-              <div class="metric"><strong>8景区</strong><span>内置坐标与热度</span></div>
-              <div class="metric"><strong>6维度</strong><span>AI估价算法</span></div>
-              <div class="metric"><strong>0成本</strong><span>免费API接入</span></div>
-            </div>
+            <ul class="feature-list hero-list reveal">
+              <li>8 个景区 × 10 类文创，覆盖徽章、书签、扇子、非遗手作等真实品类</li>
+              <li>估价维度可复核：品相、景区保值、季节、凭证、天气供需逐项展示</li>
+              <li>真实数据层：账号、商品、订单、评价、举报均落库，多设备共享</li>
+            </ul>
           </div>
-          <aside class="hero-visual glass-card reveal" aria-label="AI估价面板">
-            <div class="estimate-orbit">
-              <div class="orbit-ring"></div>
-              <div class="hero-phone">
-                <div class="phone-top"></div>
-                <div class="phone-card">
-                  <strong>故宫云纹折扇</strong>
-                  <div class="phone-price">¥135</div>
-                  <div>建议成交价</div>
-                </div>
-                <div class="phone-list"><span></span><span></span><span></span></div>
-              </div>
+          <aside class="hero-panel reveal" aria-label="平台数据概览">
+            <h2>平台实时数据</h2>
+            <div class="stat-row">
+              <div><strong id="statProducts">0</strong><span>在售商品</span></div>
+              <div><strong id="statScenics">0</strong><span>覆盖景区</span></div>
+              <div><strong id="statUsers">0</strong><span>注册用户</span></div>
+              <div><strong id="statEstimates">0</strong><span>累计估价</span></div>
+              <div><strong id="statOrders">0</strong><span>完成订单</span></div>
+              <div><strong id="statReviews">0</strong><span>交易评价</span></div>
             </div>
+            <p class="muted small">成交总额 <strong id="statGmv">¥0</strong> · 平均评分 <strong id="statScore">暂无</strong>（统计口径来自服务端聚合接口）</p>
           </aside>
         </div>
       </section>
 
-      <section class="section content">
-        <div class="section-title stack-title reveal">
-          <div>
-            <p class="section-kicker">Core Functions</p>
-            <h2>四大功能入口</h2>
-          </div>
-          <p class="muted">从估价、比价到交易和数据沉淀，形成完整闭环。</p>
-        </div>
-        <div class="feature-grid">
-          <a class="glass-card feature-card reveal" href="estimate/" data-transition>
-            <div class="feature-icon">估</div>
-            <h3>AI智能估价</h3>
-            <p class="muted">上传文创信息，按景区来源、品相、原价和热度生成建议成交价。</p>
-          </a>
-          <a class="glass-card feature-card reveal" href="compare/" data-transition>
-            <div class="feature-icon">比</div>
-            <h3>全网透明比价</h3>
-            <p class="muted">聚合官方价、商户清仓价和二手成交价，降低信息不对称。</p>
-          </a>
-          <a class="glass-card feature-card reveal" href="market/" data-transition>
-            <div class="feature-icon">市</div>
-            <h3>二手交易集市</h3>
-            <p class="muted">个人闲置与商户尾货分区展示，支持担保交易和品相说明。</p>
-          </a>
-          <a class="glass-card feature-card reveal" href="profile/" data-transition>
-            <div class="feature-icon">数</div>
-            <h3>个人数据中心</h3>
-            <p class="muted">记录估价、发布和交易轨迹，为文创消费沉淀数据档案。</p>
-          </a>
-        </div>
-      </section>
-
-      <section class="section content">
-        <div class="section-title stack-title reveal">
-          <div>
-            <p class="section-kicker">Core Capabilities</p>
-            <h2>核心能力矩阵</h2>
-          </div>
-          <p class="muted">基于真实技术能力构建，每一项都已在产品中落地运行。</p>
-        </div>
-        <div class="capability-grid reveal">
-          <article class="capability-card">
-            <div class="capability-icon" style="background:linear-gradient(135deg,#4f827a,#6ba39a);">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            </div>
-            <div class="capability-body">
-              <strong>8大景区覆盖</strong>
-              <p>故宫、西湖、敦煌、黄山、平遥、武夷山、大雁塔、丽江，内置精准坐标与热度系数</p>
-            </div>
-          </article>
-          <article class="capability-card">
-            <div class="capability-icon" style="background:linear-gradient(135deg,#ab845b,#c9a87c);">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
-            </div>
-            <div class="capability-body">
-              <strong>6维AI估价算法</strong>
-              <p>品相折旧、景区热度、季节系数、天气因子、关键词加成、供需指数，多维度加权计算</p>
-            </div>
-          </article>
-          <article class="capability-card">
-            <div class="capability-icon" style="background:linear-gradient(135deg,#5b8ab8,#7ba8d4);">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>
-            </div>
-            <div class="capability-body">
-              <strong>实时天气接入</strong>
-              <p>对接Open-Meteo免费API，8大景区实时天气自动融入估价模型，15分钟智能缓存</p>
-            </div>
-          </article>
-          <article class="capability-card">
-            <div class="capability-icon" style="background:linear-gradient(135deg,#8b5fbf,#a87dd4);">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
-            </div>
-            <div class="capability-body">
-              <strong>全端响应式适配</strong>
-              <p>手机、平板、桌面三端完美适配，720px/480px/360px三档断点，触控区域优化</p>
-            </div>
-          </article>
-          <article class="capability-card">
-            <div class="capability-icon" style="background:linear-gradient(135deg,#c75b5b,#e07b7b);">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-            <div class="capability-body">
-              <strong>纯前端零依赖</strong>
-              <p>原生JavaScript开发，无需后端服务器，GitHub Pages直接部署，API Key零暴露风险</p>
-            </div>
-          </article>
-          <article class="capability-card">
-            <div class="capability-icon" style="background:linear-gradient(135deg,#5ba87a,#7bc49a);">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M2 12h20"/></svg>
-            </div>
-            <div class="capability-body">
-              <strong>二维码分享</strong>
-              <p>估价结果一键生成分享二维码，扫码直达估价详情，适合线下景区场景传播引流</p>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section class="section content">
+      <section class="content">
         <div class="section-title reveal">
-          <div>
-            <p class="section-kicker">Hot Picks</p>
-            <h2>热门文创推荐</h2>
-          </div>
-          <a class="btn secondary" href="compare/" data-transition><span>查看比价</span></a>
+          <div><p class="section-kicker">Core Modules</p><h2>四个功能模块，一条流转链路</h2></div>
         </div>
-        <div class="product-grid" id="hotProducts"></div>
+        <div class="feature-grid reveal">
+          <a class="feature-card" href="estimate/" data-transition>
+            <span class="feature-index">01</span>
+            <h3>AI 智能估价</h3>
+            <p class="muted">填写品相、原价、凭证与购入时间，模型逐项给出系数与区间，结果可导出报告并一键转发布。</p>
+          </a>
+          <a class="feature-card" href="compare/" data-transition>
+            <span class="feature-index">02</span>
+            <h3>全网比价</h3>
+            <p class="muted">官方指导价、二手成交参考价与本平台建议价同屏对照，附 30 天价格走势与同款检索入口。</p>
+          </a>
+          <a class="feature-card" href="market/" data-transition>
+            <span class="feature-index">03</span>
+            <h3>二手集市</h3>
+            <p class="muted">按景区、品类、标签筛选，支持多图发布、商品问答、降价提醒与卖家信用档案。</p>
+          </a>
+          <a class="feature-card" href="orders/" data-transition>
+            <span class="feature-index">04</span>
+            <h3>担保交易与售后</h3>
+            <p class="muted">付款托管、卖家发货、买家确认收货后放款，支持售后申请、退款与双向评价。</p>
+          </a>
+        </div>
       </section>
 
-      <section class="section content">
-        <div class="intro-panel glass-card reveal">
-          <div class="ink-panel" aria-hidden="true"></div>
-          <div>
-            <p class="section-kicker">Project Value</p>
-            <h2>从一次性消费，到可估值、可追溯、可循环</h2>
-            <p class="muted">平台围绕景区文创产品建立价格参考、商品溯源、供需匹配和数据沉淀四类机制。</p>
-            <ul class="intro-list">
-              <li>服务游客：提供合理价格参考和安全交易路径。</li>
-              <li>服务商户：盘活滞销尾货，降低库存损耗。</li>
-              <li>服务景区：沉淀文创热度、价格波动和用户偏好数据。</li>
-            </ul>
-          </div>
-        </div>
+      <section class="content reveal">
+        <div class="section-title"><div><p class="section-kicker">Categories</p><h2>按品类浏览</h2></div></div>
+        <div class="chip-row" id="categoryNav"></div>
       </section>
 
-      <section class="section content">
-        <div class="section-title stack-title reveal">
-          <div>
-            <p class="section-kicker">Trust System</p>
-            <h2>平台保障机制</h2>
-          </div>
-          <p class="muted">解决文创产品“价格难判断、真伪难描述、交易难信任”的痛点，搭建全流程可溯源的交易保障体系。</p>
+      <section class="content reveal">
+        <div class="section-title">
+          <div><p class="section-kicker">Popular Items</p><h2>热门文创闲置</h2></div>
+          <a class="link-btn" href="market/" data-transition>查看全部 →</a>
         </div>
-        <div class="trust-grid">
-          <article class="glass-card trust-card reveal">
-            <span>01</span>
-            <h3>价格参考</h3>
-            <p class="muted">用官方价、低价样本、历史成交区间和品相折旧形成可解释建议价。</p>
+        <div class="market-grid" id="hotProducts"></div>
+      </section>
+
+      <section class="content reveal">
+        <div class="section-title"><div><p class="section-kicker">Escrow Flow</p><h2>担保交易怎么走</h2></div></div>
+        <div class="flow-grid" id="escrowFlow"></div>
+      </section>
+
+      <section class="content reveal">
+        <div class="section-title">
+          <div><p class="section-kicker">Culture Wall</p><h2>8 个景区的文创底稿</h2></div>
+          <p class="muted small">每个景区都有其非遗工艺、保值规律与鉴别提示，避免“只有名字没有文化”</p>
+        </div>
+        <div class="scenic-wall" id="scenicWall"></div>
+      </section>
+
+      <section class="content reveal">
+        <div class="section-title"><div><p class="section-kicker">Trust &amp; Compliance</p><h2>平台保障与数据合规</h2></div></div>
+        <div class="grid-3">
+          <article class="panel">
+            <h3>数据与隐私</h3>
+            <p class="muted small">用户数据存于平台数据库，实名信息仅保存脱敏号码；站内不采集与业务无关的个人信息。详见 <a class="link-btn" href="legal/" data-transition>用户协议与隐私说明</a>。</p>
           </article>
-          <article class="glass-card trust-card reveal">
-            <span>02</span>
-            <h3>品相验真</h3>
-            <p class="muted">通过上传图片、包装完整度、瑕疵描述和卖家信用降低交易争议。</p>
+          <article class="panel">
+            <h3>内容安全</h3>
+            <p class="muted small">商品、评价、提问与站内消息均经过敏感词过滤与人工审核；支持举报，处理结论会通知双方并写入审计日志。</p>
           </article>
-          <article class="glass-card trust-card reveal">
-            <span>03</span>
-            <h3>担保交易</h3>
-            <p class="muted">平台担保、确认收货和售后申诉流程，增强二手流转信任。</p>
-          </article>
-          <article class="glass-card trust-card reveal">
-            <span>04</span>
-            <h3>景区反馈</h3>
-            <p class="muted">沉淀热度、价格和流转数据，为景区文创选品与补货提供参考。</p>
+          <article class="panel">
+            <h3>数据来源声明</h3>
+            <p class="muted small">天气数据来自 Open-Meteo 公共接口；商品、景区与文化资料为团队整理与模拟数据；价格走势为按基准价确定性生成的演示数据，均已在页面标注。</p>
           </article>
         </div>
       </section>
     </main>
-
-    <footer class="site-footer">
-      <p>智价宝——遗景续珍：景区文创闲置资源流转赋能平台</p>
-      <p style="font-size:12px;opacity:0.6;margin-top:8px;">本站为竞赛演示原型，平台数据、商品信息及估价结果均为模拟演示数据，不构成真实交易依据。</p>
-    </footer>
   </div>
 
-  <aside class="qr-float reveal" aria-label="官网入口">
-    <div class="qr-code" aria-hidden="true"></div>
-    <div>
-      <strong>手机访问官网</strong>
-      <span>用于手机端快速浏览平台页面</span>
+  <footer class="site-footer">
+    <div class="content footer-inner">
+      <div class="mode-badge" id="modeBadge" role="status"></div>
+      <p class="muted small">智价宝为竞赛演示项目（全国大学生数字媒体科技作品及创意竞赛 · 移动与网络应用开发类）。商品、景区文化资料与估价结果为团队整理的演示数据，不构成真实交易依据。</p>
+      <nav class="footer-links" aria-label="页脚导航">
+        <a href="legal/" data-transition>用户协议与隐私说明</a>
+        <a href="estimate/" data-transition>AI 估价</a>
+        <a href="compare/" data-transition>比价</a>
+        <a href="market/" data-transition>集市</a>
+        <a href="orders/" data-transition>订单</a>
+        <a href="admin/" data-transition>运营后台</a>
+      </nav>
     </div>
-  </aside>
+  </footer>
 
+  <button class="back-to-top" id="backToTop" type="button" aria-label="回到顶部">↑</button>
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
-  <script src="api-services.js?v=20260918b"></script>
-  <script src="script.js?v=20260918b"></script>
+  <script src="site-data.js?v=20260929a"></script>
+  <script src="pricing.js?v=20260929a"></script>
+  <script src="api-services.js?v=20260929a"></script>
+  <script src="store.js?v=20260929a"></script>
+  <script src="script.js?v=20260929a"></script>
+  <script src="app-core.js?v=20260929a"></script>
+  <script src="app-account.js?v=20260929a"></script>
 </body>
 </html>

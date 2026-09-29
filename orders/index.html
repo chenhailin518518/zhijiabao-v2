@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>个人中心 - 智价宝 | 订单、收藏、发布与账号安全</title>
-  <meta name="description" content="智价宝个人中心：账号注册登录、实名认证、收货地址、我的发布、收藏与降价提醒、浏览足迹、估价记录、通知中心与账号注销。">
+  <title>我的订单 - 智价宝 | 担保交易、物流与售后</title>
+  <meta name="description" content="担保交易订单中心：查看我买到的与我卖出的订单，完成付款、发货、确认收货、售后退款与交易评价，全程状态可追溯。">
   <meta name="theme-color" content="#2f3d3a">
-  <link rel="canonical" href="https://chenhailin518518.github.io/zhijiabao-demo/profile/">
+  <link rel="canonical" href="https://chenhailin518518.github.io/zhijiabao-demo/orders/">
   <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="../manifest.webmanifest">
   <link rel="stylesheet" href="../styles.css?v=20260929a">
   <link rel="stylesheet" href="../styles-app.css?v=20260929a">
 </head>
-<body data-page="profile">
+<body data-page="orders">
   <a class="skip-link" href="#main">跳到主要内容</a>
   <canvas id="particleCanvas" aria-hidden="true"></canvas>
   <div class="transition-mask" aria-hidden="true"></div>
@@ -30,8 +30,8 @@
       <a class="nav-link" href="../estimate/" data-transition><span>AI智能估价</span></a>
       <a class="nav-link" href="../compare/" data-transition><span>全网比价</span></a>
       <a class="nav-link" href="../market/" data-transition><span>二手集市</span></a>
-      <a class="nav-link" href="../orders/" data-transition><span>我的订单</span></a>
-      <a class="nav-link active" href="../profile/" data-transition><span>个人中心</span></a>
+      <a class="nav-link active" href="../orders/" data-transition><span>我的订单</span></a>
+      <a class="nav-link" href="../profile/" data-transition><span>个人中心</span></a>
       <a class="nav-link" href="../admin/" data-transition><span>运营后台</span></a>
     </nav>
     <div class="header-actions">
@@ -45,12 +45,12 @@
   <div class="page-shell">
     <main id="main">
       <section class="content page-hero reveal">
-        <p class="section-kicker">Profile Center</p>
-        <h1 class="shine-text">账号、交易与信用一处管理</h1>
-        <p class="muted">账号数据保存在平台数据库中（本地演示模式下退化为浏览器存储）。实名认证仅保存脱敏号码，信用分由评价、成交与举报处置自动计算。</p>
+        <p class="section-kicker">Orders &amp; Escrow</p>
+        <h1 class="shine-text">担保交易全流程</h1>
+        <p class="muted">状态流转：待付款 → 待发货 → 待收货 → 已完成；任一环节可发起售后，卖家同意后原路退款。平台服务费按成交价的 2% 向卖家收取，确认收货时才放款。</p>
       </section>
-      <section class="content" id="profileHost">
-        <div class="detail-loading"><span class="spinner"></span>正在加载账号信息…</div>
+      <section class="content" id="ordersHost">
+        <div class="detail-loading"><span class="spinner"></span>正在加载订单…</div>
       </section>
     </main>
   </div>
@@ -58,10 +58,10 @@
   <footer class="site-footer">
     <div class="content footer-inner">
       <div class="mode-badge" id="modeBadge" role="status"></div>
-      <p class="muted small">可随时导出/删除你的估价记录与收藏数据；注销账号会同时下架在售商品。</p>
+      <p class="muted small">演示环境的付款为模拟支付，不产生真实资金往来；状态机与放款逻辑与服务端一致。</p>
       <nav class="footer-links" aria-label="页脚导航">
         <a href="../" data-transition>首页</a>
-        <a href="../orders/" data-transition>我的订单</a>
+        <a href="../market/" data-transition>二手集市</a>
         <a href="../messages/" data-transition>消息中心</a>
         <a href="../legal/" data-transition>用户协议与隐私说明</a>
       </nav>

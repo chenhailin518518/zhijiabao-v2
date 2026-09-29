@@ -3,109 +3,110 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>全网比价 - 智价宝</title>
+  <title>全网比价 - 智价宝 | 官方价 / 二手成交价 / 建议价对照</title>
+  <meta name="description" content="把官方指导价、二手成交参考价与智价宝建议价放在同一屏对照，支持按景区、品类、价格区间筛选，并查看近 30 天价格走势与同款检索入口。">
+  <meta name="theme-color" content="#2f3d3a">
+  <link rel="canonical" href="https://chenhailin518518.github.io/zhijiabao-demo/compare/">
+  <meta property="og:title" content="全网比价 - 智价宝">
+  <meta property="og:description" content="官方价、二手成交参考价与平台建议价三价对照，带价格走势与同款检索。">
   <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="../styles.css?v=20260918b">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="stylesheet" href="../styles.css?v=20260929a">
+  <link rel="stylesheet" href="../styles-app.css?v=20260929a">
 </head>
-<body data-page="compare" class="skeleton-active">
+<body data-page="compare">
+  <a class="skip-link" href="#main">跳到主要内容</a>
   <canvas id="particleCanvas" aria-hidden="true"></canvas>
   <div class="transition-mask" aria-hidden="true"></div>
-  <div class="skeleton-screen" id="skeletonScreen" aria-hidden="true">
-    <div class="skeleton-stage">
-      <div class="skeleton-nav">
-        <div class="skeleton-brand">
-          <div class="skeleton-logo"></div>
-          <div class="skeleton-lines" style="gap:8px;">
-            <div class="skel text short" style="width:110px;height:18px;"></div>
-            <div class="skel text short" style="width:150px;height:12px;"></div>
-          </div>
-        </div>
-        <div class="skeleton-menu">
-          <div class="skel button" style="width:58px;height:34px;"></div>
-          <div class="skel button" style="width:92px;height:34px;"></div>
-          <div class="skel button" style="width:78px;height:34px;"></div>
-          <div class="skel button" style="width:78px;height:34px;"></div>
-          <div class="skel button" style="width:78px;height:34px;"></div>
-        </div>
-      </div>
-      <div class="skeleton-hero">
-        <div class="skeleton-lines">
-          <div class="skel kicker"></div>
-          <div class="skel title"></div>
-          <div class="skel title short"></div>
-          <div class="skel text"></div>
-          <div class="skel text medium"></div>
-          <div class="skeleton-actions">
-            <div class="skel button"></div>
-            <div class="skel button"></div>
-          </div>
-        </div>
-        <div class="skeleton-phone"></div>
-      </div>
-      <div class="skeleton-card-row">
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
-        <div class="skeleton-card"></div>
-      </div>
-    </div>
-  </div>
 
   <header class="site-header">
     <a class="brand" href="../" data-transition>
       <span class="brand-mark">智</span>
       <span>
         <span class="brand-title">智价宝</span>
-        <span class="brand-sub">全网文创价格雷达</span>
+        <span class="brand-sub">景区文创闲置流转平台</span>
       </span>
     </a>
     <nav class="main-nav" aria-label="主导航">
-      <a class="nav-link " href="../" data-transition><span>首页</span></a>
-      <a class="nav-link " href="../estimate/" data-transition><span>AI智能估价</span></a>
+      <a class="nav-link" href="../" data-transition><span>首页</span></a>
+      <a class="nav-link" href="../estimate/" data-transition><span>AI智能估价</span></a>
       <a class="nav-link active" href="../compare/" data-transition><span>全网比价</span></a>
-      <a class="nav-link " href="../market/" data-transition><span>二手集市</span></a>
-      <a class="nav-link " href="../profile/" data-transition><span>个人中心</span></a>
+      <a class="nav-link" href="../market/" data-transition><span>二手集市</span></a>
+      <a class="nav-link" href="../orders/" data-transition><span>我的订单</span></a>
+      <a class="nav-link" href="../profile/" data-transition><span>个人中心</span></a>
+      <a class="nav-link" href="../admin/" data-transition><span>运营后台</span></a>
     </nav>
-    <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换深色国风主题" aria-pressed="false" title="切换主题">
-      <span class="theme-toggle-icon" aria-hidden="true">☾</span>
-    </button>
+    <div class="header-actions">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="切换深色国风主题" aria-pressed="false" title="切换主题">
+        <span class="theme-toggle-icon" aria-hidden="true">☾</span>
+      </button>
+      <div class="auth-slot" id="authSlot"></div>
+    </div>
   </header>
 
   <div class="page-shell">
-    <main class="page-main">
-      <section class="wide-content page-hero reveal">
+    <main id="main">
+      <section class="content page-hero reveal">
         <p class="section-kicker">Price Radar</p>
-        <h1 class="shine-text">全网比价，找到文创合理价</h1>
-        <p class="muted">聚合官方商城、商户尾货、二手成交与平台建议区间，帮助用户判断文创合理价格。</p>
+        <h1 class="shine-text">全网比价，找到文创的合理价</h1>
+        <p class="muted">三价对照：景区官方指导价（正品但最高）、二手成交参考价（约当前售价的 94%）、智价宝建议价。价格走势为按商品基准价确定性生成的演示数据，已在图表上标注；页面同时提供跳转到电商与二手平台检索同款的入口，便于人工核对。</p>
       </section>
 
-      <section class="wide-content">
+      <section class="content">
         <div class="toolbar reveal">
           <div class="search-box">
-            <input class="field" id="compareSearch" placeholder="搜索文创、景区或关键词">
-            <span class="search-icon">⌕</span>
+            <input class="field" id="compareSearch" maxlength="40" placeholder="搜索文创名称、景区或关键词" aria-label="搜索文创">
+            <span class="search-icon" aria-hidden="true">⌕</span>
+          </div>
+          <div class="filter-group">
+            <select class="select" id="compareScenic" aria-label="按景区筛选"></select>
+            <select class="select" id="compareCategory" aria-label="按品类筛选"></select>
+            <select class="select" id="compareSort" aria-label="排序方式"></select>
           </div>
           <aside class="range-panel glass-card">
             <strong>价格筛选</strong>
             <p class="muted" id="rangeText">¥220 以下</p>
-            <input id="priceRange" type="range" min="30" max="220" value="220">
+            <input id="priceRange" type="range" min="30" max="220" value="220" aria-label="价格上限">
           </aside>
         </div>
-        <div class="tag-filter reveal" aria-label="景区分类">
-          <button class="filter-tag active" data-category="全部">全部</button>
-          <button class="filter-tag" data-category="北京">北京</button>
-          <button class="filter-tag" data-category="杭州">杭州</button>
-          <button class="filter-tag" data-category="敦煌">敦煌</button>
-          <button class="filter-tag" data-category="黄山">黄山</button>
-          <button class="filter-tag" data-category="西安">西安</button>
+
+        <div class="reveal" id="searchHistory"></div>
+
+        <div class="platform-row reveal">
+          <span class="muted small">价格来源与同款检索：</span>
+          <button class="chip" type="button" data-platform="official">官方指导价</button>
+          <button class="chip" type="button" data-platform="mall">去电商查同款</button>
+          <button class="chip" type="button" data-platform="secondhand">去二手平台查成交</button>
+          <button class="chip" type="button" data-platform="platform">本平台建议价</button>
         </div>
-        <div class="market-grid smooth-list reveal" id="compareList" style="margin-top: 24px;"></div>
+
+        <div class="market-grid reveal" id="compareList"></div>
       </section>
     </main>
   </div>
 
+  <footer class="site-footer">
+    <div class="content footer-inner">
+      <div class="mode-badge" id="modeBadge" role="status"></div>
+      <p class="muted small">比价数据由平台商品库与确定性演示序列生成，第三方平台仅提供关键词检索跳转，不做抓取，避免数据来源争议。</p>
+      <nav class="footer-links" aria-label="页脚导航">
+        <a href="../" data-transition>首页</a>
+        <a href="../estimate/" data-transition>AI 估价</a>
+        <a href="../market/" data-transition>二手集市</a>
+        <a href="../legal/" data-transition>用户协议与隐私说明</a>
+      </nav>
+    </div>
+  </footer>
 
-  <script src="../api-services.js?v=20260918b"></script>
-  <script src="../script.js?v=20260918b"></script>
+  <button class="back-to-top" id="backToTop" type="button" aria-label="回到顶部">↑</button>
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+  <script src="../site-data.js?v=20260929a"></script>
+  <script src="../pricing.js?v=20260929a"></script>
+  <script src="../api-services.js?v=20260929a"></script>
+  <script src="../store.js?v=20260929a"></script>
+  <script src="../script.js?v=20260929a"></script>
+  <script src="../app-core.js?v=20260929a"></script>
+  <script src="../app-account.js?v=20260929a"></script>
 </body>
 </html>

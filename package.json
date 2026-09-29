@@ -1,0 +1,33 @@
+{
+  "name": "zhijiabao",
+  "version": "2.0.0",
+  "private": true,
+  "description": "智价宝 - 景区文创闲置流转平台（静态站点 + 零依赖 Node 后端，Node >= 22）",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node server/server.mjs",
+    "dev": "node --watch server/server.mjs",
+    "test": "node tests/unit.mjs && node tests/smoke.mjs && node tests/api.mjs && node tests/dom.mjs",
+    "test:unit": "node tests/unit.mjs",
+    "test:smoke": "node tests/smoke.mjs",
+    "test:api": "node tests/api.mjs",
+    "test:dom": "node tests/dom.mjs",
+    "mirror": "node tools/sync-mirrors.mjs",
+    "optimize:images": "python tools/optimize-images.py",
+    "reset:data": "node tools/reset-data.mjs"
+  },
+  "keywords": [
+    "景区文创",
+    "闲置流转",
+    "AI估价",
+    "担保交易",
+    "数字媒体竞赛"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "jsdom": "^26.1.0"
+  }
+}
