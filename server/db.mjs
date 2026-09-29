@@ -4,17 +4,34 @@
   表结构覆盖账号、商品、订单、评价、举报、消息、地址、收藏、足迹、估价、埋点、审计。
 */
 import { DatabaseSync } from "node:sqlite";
-import { mkdirSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 import { randomBytes, scryptSync, timingSafeEqual, randomUUID } from "node:crypto";
 
 const here = import.meta.dirname;
+/* 随仓库发布的演示数据库快照（由 tools/export-demo-data.mjs 生成） */
+const SEED_SNAPSHOT = join(here, "data", "demo-seed.db");
+
 /* 测试或自定义部署可通过 ZHJ_DATA_DIR 指定数据目录 */
-export const DATA_DIR = process.env.ZHJ_DATA_DIR || join(here, "data");
+const customDataDir = process.env.ZHJ_DATA_DIR || "";
+export const DATA_DIR = customDataDir || join(here, "data");
 export const UPLOAD_DIR = join(DATA_DIR, "uploads");
 mkdirSync(UPLOAD_DIR, { recursive: true });
 
-export const db = new DatabaseSync(join(DATA_DIR, "zhijiabao.db"));
+export const DB_FILE = join(DATA_DIR, "zhijiabao.db");
+
+/*
+  首次启动时优先采用演示快照（含 10 件商品、4 笔订单、评价、埋点等），
+  这样克隆仓库后直接 npm start 就有完整可演示的数据；
+  指定了 ZHJ_DATA_DIR（测试环境）或设置 ZHJ_USE_SNAPSHOT=0 时改为按代码写入种子数据。
+*/
+const useSnapshot = !customDataDir && process.env.ZHJ_USE_SNAPSHOT !== "0" && existsSync(SEED_SNAPSHOT);
+if (!existsSync(DB_FILE) && useSnapshot) {
+  copyFileSync(SEED_SNAPSHOT, DB_FILE);
+  console.log("[db] 已从演示快照初始化数据库：server/data/demo-seed.db");
+}
+
+export const db = new DatabaseSync(DB_FILE);
 db.exec("PRAGMA journal_mode = WAL;");
 db.exec("PRAGMA busy_timeout = 4000;");
 

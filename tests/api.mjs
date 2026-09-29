@@ -6,9 +6,10 @@
 */
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
-import { mkdtempSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
+import { DatabaseSync } from "node:sqlite";
 
 const PORT = 8123;
 const BASE = `http://127.0.0.1:${PORT}`;
@@ -80,6 +81,18 @@ try {
   let orderId = "";
   let productId = "";
   let reportId = 0;
+
+  await check("演示数据库快照存在，且不含会话令牌与验证码", async () => {
+    const seed = join(resolve(import.meta.dirname, ".."), "server", "data", "demo-seed.db");
+    assert.ok(existsSync(seed), "应随仓库发布 server/data/demo-seed.db（可用 npm run export:demo 重新生成）");
+    const seedDb = new DatabaseSync(seed);
+    assert.equal(seedDb.prepare("SELECT COUNT(*) AS c FROM sessions").get().c, 0, "快照中不能包含会话令牌");
+    assert.equal(seedDb.prepare("SELECT COUNT(*) AS c FROM sms_codes").get().c, 0, "快照中不能包含短信验证码");
+    assert.ok(seedDb.prepare("SELECT COUNT(*) AS c FROM products").get().c >= 8, "快照应包含演示商品");
+    assert.ok(seedDb.prepare("SELECT COUNT(*) AS c FROM orders").get().c >= 1, "快照应包含演示订单");
+    assert.ok(seedDb.prepare("SELECT COUNT(*) AS c FROM events").get().c > 0, "快照应包含埋点数据，便于展示运营看板");
+    seedDb.close();
+  });
 
   await check("健康检查返回 8 个景区与品类字典", async () => {
     const { data } = await api("/api/health");

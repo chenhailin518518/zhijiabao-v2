@@ -44,6 +44,23 @@ npm start
 
 也支持手机号 + 验证码登录：演示环境由接口直接回传验证码，正式部署需接入短信网关。
 
+### 4. 仓库自带的演示数据库
+
+`server/data/demo-seed.db` 是一份**已构造好的演示数据快照**，由 `npm run export:demo` 在临时目录启动真实后端、走真实接口跑出来（发布 → 审核 → 担保交易 → 发货 → 确认收货 → 评价 → 售后 → 举报……），因此时间线、通知、信用分、审计日志都是程序真实产生的：
+
+| 内容 | 数量 |
+| --- | --- |
+| 用户 / 商品（在售） | 3 / 10（6） |
+| 订单（已完成 / 待发货 / 已取消 / 售后中） | 4（1） |
+| 评价 / 估价记录 / 埋点 | 6 / 3 / 66 |
+| 通知 / 审计日志 / 待处理举报 | 18 / 19 / 1 |
+
+- 首次 `npm start` 时如果还没有运行库，服务端会**自动复制这份快照**作为初始数据，首页看板、订单中心、运营后台一打开就有内容；
+- 快照中**已清空会话令牌与短信验证码**（`npm run test:api` 会持续校验这一点），实名信息仅保留脱敏号码，不含真实个人数据；
+- `npm run reset:data` 只清理运行库与上传目录、保留快照，因此随时能回到演示初始状态；
+- `npm run inspect:data` 可查看当前库的每张表数据量与敏感字段；
+- `npm run export:demo` 重新生成快照（覆盖旧文件），想换成自己演示过的数据时用它。
+
 ---
 
 ## 二、功能模块
@@ -175,8 +192,10 @@ npm run reset:data    # 重置本地数据库与上传目录
 ├── styles.css / styles-app.css
 ├── assets/img/                  favicon、hero-bg.webp/jpg、8 张商品图（WebP）
 ├── server/                      server.mjs（接口与静态托管）、db.mjs（建表与种子）
+│   └── data/demo-seed.db        随仓库发布的演示数据快照（运行时生成的 zhijiabao.db 不提交）
 ├── tests/                       unit.mjs / smoke.mjs / api.mjs / dom.mjs
 ├── tools/                       sync-mirrors.mjs / optimize-images.py / reset-data.mjs
+│                                inspect-data.mjs / export-demo-data.mjs
 ├── .github/workflows/ci.yml     CI：Node 22 与 24 双版本跑全部测试
 ├── manifest.webmanifest / sw.js / robots.txt / sitemap.xml
 └── package.json / LICENSE / README.md / README.en.md

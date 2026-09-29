@@ -22,6 +22,11 @@ for (const file of files) {
     removed += 1;
     continue;
   }
+  /* 演示快照随仓库发布，必须保留 */
+  if (file === "demo-seed.db") {
+    console.log("  保留 demo-seed.db（仓库自带的演示快照）");
+    continue;
+  }
   const full = join(DATA_DIR, file);
   if (statSync(full).isFile()) {
     rmSync(full, { force: true });
@@ -29,4 +34,4 @@ for (const file of files) {
     removed += 1;
   }
 }
-console.log(`重置完成，共处理 ${removed} 项。下次启动服务会重新写入 8 件种子商品与 3 个演示账号。`);
+console.log(`重置完成，共处理 ${removed} 项。下次启动服务会从演示快照恢复数据（10 件商品、4 笔订单、演示评价与埋点）。`);

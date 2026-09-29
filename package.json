@@ -17,7 +17,9 @@
     "test:dom": "node tests/dom.mjs",
     "mirror": "node tools/sync-mirrors.mjs",
     "optimize:images": "python tools/optimize-images.py",
-    "reset:data": "node tools/reset-data.mjs"
+    "reset:data": "node tools/reset-data.mjs",
+    "inspect:data": "node tools/inspect-data.mjs",
+    "export:demo": "node tools/export-demo-data.mjs"
   },
   "keywords": [
     "景区文创",
