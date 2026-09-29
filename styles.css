@@ -1317,63 +1317,6 @@ body.theme-dark .phone-list span {
   margin: 18px 0 10px;
 }
 
-.qr-float {
-  position: fixed;
-  right: 22px;
-  bottom: 22px;
-  z-index: 900;
-  width: 248px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.62);
-  border-radius: 20px;
-  color: var(--qingdai-deep);
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.76), rgba(247, 244, 236, 0.58)),
-    rgba(247, 244, 236, 0.6);
-  backdrop-filter: blur(18px) saturate(1.16);
-  -webkit-backdrop-filter: blur(18px) saturate(1.16);
-  box-shadow: 0 20px 54px rgba(19, 41, 50, 0.18);
-}
-
-body.theme-dark .qr-float {
-  border-color: rgba(239, 213, 164, 0.2);
-  background:
-    linear-gradient(135deg, rgba(24, 42, 47, 0.82), rgba(12, 27, 32, 0.62)),
-    rgba(10, 24, 28, 0.56);
-}
-
-.qr-code {
-  flex: 0 0 auto;
-  width: 68px;
-  height: 68px;
-  border-radius: 14px;
-  background:
-    linear-gradient(90deg, var(--qingdai) 10px, transparent 10px 18px, var(--qingdai) 18px 28px, transparent 28px 40px, var(--qingdai) 40px 52px, transparent 52px),
-    linear-gradient(var(--qingdai) 10px, transparent 10px 18px, var(--qingdai) 18px 28px, transparent 28px 40px, var(--qingdai) 40px 52px, transparent 52px),
-    radial-gradient(circle at 18px 18px, var(--tea) 0 7px, transparent 8px),
-    radial-gradient(circle at 50px 18px, var(--tea) 0 7px, transparent 8px),
-    radial-gradient(circle at 18px 50px, var(--tea) 0 7px, transparent 8px),
-    var(--moon);
-  background-size: 68px 68px;
-  box-shadow: inset 0 0 0 5px rgba(255, 255, 255, 0.9);
-}
-
-.qr-float strong {
-  display: block;
-  margin-bottom: 4px;
-  font-size: 15px;
-}
-
-.qr-float span {
-  display: block;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.45;
-}
-
 .product-card {
   min-height: 360px;
   background: rgba(255, 255, 255, 0.66);
@@ -2471,14 +2414,6 @@ body.theme-dark .publish-preview {
     min-height: auto;
   }
 
-  .qr-float {
-    position: static;
-    width: 100%;
-    max-width: 100%;
-    margin: -24px 12px 24px;
-    width: calc(100% - 24px);
-  }
-
   .valuation-grid {
     grid-template-columns: 1fr;
   }
@@ -3112,7 +3047,7 @@ body.theme-dark .publish-preview {
 
 
 /* ============================================================
-   移动端适配优化（天气模块 / 二维码分享 / 表单 / 弹窗）
+   移动端适配优化（天气模块 / 表单 / 弹窗）
    ============================================================ */
 
 /* --- 720px以下：平板和手机 --- */
@@ -3140,29 +3075,6 @@ body.theme-dark .publish-preview {
 
   #weatherUpdateTime {
     font-size: 11px !important;
-  }
-
-  /* 二维码分享区域：纵向排列 */
-  #shareSection {
-    flex-direction: column-reverse !important;
-    align-items: center !important;
-    gap: 12px !important;
-    text-align: center !important;
-  }
-
-  #shareSection > div:first-child {
-    flex: none !important;
-    width: 100% !important;
-  }
-
-  #shareSection p {
-    text-align: center !important;
-  }
-
-  #qrcodeContainer {
-    width: 120px !important;
-    height: 120px !important;
-    padding: 5px !important;
   }
 
   /* 估价表单：单列布局 */

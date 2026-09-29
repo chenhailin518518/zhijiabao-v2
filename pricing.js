@@ -224,10 +224,63 @@
        partial        只校验传入的字段（PATCH 局部更新），value 也只含传入字段
        requireImages  是否强制至少一张实拍图，默认跟随 partial（局部更新不要求）
      ========================= */
+  /*
+    敏感词表：按类别维护。
+    注意这只是「明显违规先拦一道」，不能替代小程序上线所需的官方内容安全检测
+    （文本 msgSecCheck / 图片 imgSecCheck），详见改造方案的 3.5。
+  */
   const SENSITIVE_WORDS = [
-    "赌博", "刷单", "高仿", "假货", "违禁", "代开发票", "枪支", "管制刀具",
-    "色情", "贷款套现", "私接微商", "站外交易", "加微信转账"
+    /* 赌博与博彩 */
+    "赌博", "博彩", "彩票代购", "网络棋牌",
+    /* 虚假交易与刷单 */
+    "刷单", "刷好评", "刷销量", "水军", "互刷", "虚假交易",
+    /* 违禁物品 */
+    "枪支", "仿真枪", "管制刀具", "弓弩", "电击器", "毒品", "迷药", "窃听器",
+    /* 野生动物与文物 */
+    "象牙", "虎骨", "犀角", "出土文物", "盗墓",
+    /* 侵权与假冒 */
+    "高仿", "假货", "A货", "原单", "盗版", "违禁",
+    /* 金融与票据 */
+    "贷款套现", "套现", "洗钱", "代开发票",
+    /* 色情与低俗 */
+    "色情", "裸聊", "约炮",
+    /* 个人信息与黑产 */
+    "银行卡四件套", "手持身份证",
+    /* 站外交易与引流（与平台担保交易直接对立） */
+    "站外交易", "私下交易", "私下转账", "私接微商", "加微信转账", "加微信",
+    "加我微信", "扫码转账", "微信转账", "支付宝转账", "银行转账", "绕过平台"
   ];
+
+  /* 归一化的词表：去空白、去分隔符、全角转半角后再比对 */
+  const SENSITIVE_NORMALIZED = SENSITIVE_WORDS.map((w) => normalizeForMatch(w));
+
+  /*
+    归一化：把「刷 单」「刷*单」「刷　单」以及零宽字符等规避写法还原成可比对的形态。
+    不做这步的话，词表只要被插入一个空格或符号就能绕过。
+  */
+  function normalizeForMatch(text) {
+    return String(text || "")
+      .replace(/[\u200b-\u200f\ufeff]/g, "")          /* 零宽字符与 BOM */
+      .replace(/[\uff01-\uff5e]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0)) /* 全角转半角 */
+      .replace(/[\s\u3000]+/g, "")                     /* 空白与全角空格 */
+      .replace(/[·・.,，。、*＊_\-—+＋|｜/\\~～^'""'']+/g, ""); /* 常见分隔符 */
+  }
+
+  /*
+    命中的敏感词列表。
+    先按原样匹配，再按归一化匹配，两者取并集——
+    保留原样匹配是为了让命中结果保持用户输入的原始词形（提示更易读）。
+  */
+  function findSensitive(text) {
+    const raw = String(text || "");
+    if (!raw.trim()) return [];
+    const body = normalizeForMatch(raw);
+    const hits = new Set();
+    SENSITIVE_WORDS.forEach((word, i) => {
+      if (raw.includes(word) || body.includes(SENSITIVE_NORMALIZED[i])) hits.add(word);
+    });
+    return [...hits];
+  }
 
   function validateProduct(input = {}, { partial = false, requireImages = !partial } = {}) {
     const errors = [];
@@ -293,10 +346,102 @@
       out.images = images.slice(0, maxCount);
     }
 
-    const hit = SENSITIVE_WORDS.filter((w) => `${out.name || ""} ${out.description || ""} ${out.tag || ""}`.includes(w));
+    const hit = findSensitive(`${out.name || ""} ${out.description || ""} ${out.tag || ""}`);
     if (hit.length) errors.push({ field: "name", message: `内容包含平台禁售或违规词：${hit.join("、")}` });
 
     return { valid: errors.length === 0, errors, value: out };
+  }
+
+  /* =========================
+     天气：把 Open-Meteo 原始响应映射为估价用的天气因子
+     浏览器与后端代理共用这一份，避免两端各写一套系数而漂移
+     ========================= */
+  const WEATHER_CODE_MAP = {
+    0: { label: "晴", icon: "☀️", factor: 1.03 },
+    1: { label: "大部晴", icon: "🌤️", factor: 1.02 },
+    2: { label: "多云", icon: "⛅", factor: 1.01 },
+    3: { label: "阴", icon: "☁️", factor: 0.99 },
+    45: { label: "雾", icon: "🌫️", factor: 0.97 },
+    48: { label: "冻雾", icon: "🌫️", factor: 0.95 },
+    51: { label: "小毛毛雨", icon: "🌦️", factor: 0.97 },
+    53: { label: "毛毛雨", icon: "🌦️", factor: 0.96 },
+    55: { label: "大毛毛雨", icon: "🌧️", factor: 0.94 },
+    56: { label: "冻毛毛雨", icon: "🌧️", factor: 0.93 },
+    57: { label: "强冻毛毛雨", icon: "🌧️", factor: 0.92 },
+    61: { label: "小雨", icon: "🌦️", factor: 0.96 },
+    63: { label: "中雨", icon: "🌧️", factor: 0.94 },
+    65: { label: "大雨", icon: "🌧️", factor: 0.91 },
+    66: { label: "冻雨", icon: "🌧️", factor: 0.90 },
+    67: { label: "强冻雨", icon: "🌧️", factor: 0.89 },
+    71: { label: "小雪", icon: "🌨️", factor: 0.94 },
+    73: { label: "中雪", icon: "🌨️", factor: 0.92 },
+    75: { label: "大雪", icon: "❄️", factor: 0.90 },
+    77: { label: "雪粒", icon: "❄️", factor: 0.91 },
+    80: { label: "小阵雨", icon: "🌦️", factor: 0.96 },
+    81: { label: "阵雨", icon: "🌧️", factor: 0.94 },
+    82: { label: "强阵雨", icon: "⛈️", factor: 0.90 },
+    85: { label: "小阵雪", icon: "🌨️", factor: 0.93 },
+    86: { label: "强阵雪", icon: "❄️", factor: 0.90 },
+    95: { label: "雷暴", icon: "⛈️", factor: 0.87 },
+    96: { label: "雷暴伴小冰雹", icon: "⛈️", factor: 0.86 },
+    99: { label: "雷暴伴大冰雹", icon: "⛈️", factor: 0.84 }
+  };
+
+  /* Open-Meteo 的请求地址只有一份来源 */
+  function openMeteoUrl(lat, lon) {
+    return `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`
+      + "&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m"
+      + "&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=1";
+  }
+
+  function weatherFromOpenMeteo(payload, { scenic = "", city = "" } = {}) {
+    const current = payload?.current || {};
+    const daily = payload?.daily || {};
+    const info = WEATHER_CODE_MAP[current.weather_code] || { label: "未知", icon: "❓", factor: 1.0 };
+    const temp = current.temperature_2m;
+
+    /* 温度修正：舒适温度游客多，极端温度游客少 */
+    let tempFactor = 1.0;
+    if (temp >= 15 && temp <= 28) tempFactor = 1.02;
+    else if (temp > 32 || temp < 5) tempFactor = 0.96;
+    else if (temp > 28 && temp <= 32) tempFactor = 0.99;
+    else if (temp >= 5 && temp < 15) tempFactor = 0.98;
+
+    return {
+      scenic,
+      city,
+      temperature: Math.round(temp),
+      apparentTemp: Math.round(current.apparent_temperature ?? temp),
+      humidity: current.relative_humidity_2m,
+      windSpeed: Math.round(current.wind_speed_10m),
+      windDirection: current.wind_direction_10m,
+      weatherCode: current.weather_code,
+      weatherLabel: info.label,
+      weatherIcon: info.icon,
+      tempMax: Math.round(daily.temperature_2m_max?.[0] ?? temp),
+      tempMin: Math.round(daily.temperature_2m_min?.[0] ?? temp),
+      precipProbability: daily.precipitation_probability_max?.[0] ?? 0,
+      weatherFactor: Math.round(info.factor * tempFactor * 1000) / 1000,
+      tempFactor,
+      baseFactor: info.factor,
+      fetchedAt: new Date().toISOString()
+    };
+  }
+
+  /* 取不到天气时的中性降级值，保证不阻塞估价 */
+  function degradedWeather({ scenic = "", city = "" } = {}) {
+    return {
+      scenic,
+      city,
+      temperature: null,
+      weatherLabel: "数据获取中",
+      weatherIcon: "🔄",
+      weatherFactor: 1.0,
+      tempFactor: 1.0,
+      baseFactor: 1.0,
+      isDegraded: true,
+      fetchedAt: new Date().toISOString()
+    };
   }
 
   const money = (n) => `¥${Number(n || 0).toLocaleString("zh-CN")}`;
@@ -306,6 +451,9 @@
     ORDER_FLOW,
     ORDER_STATUS_STYLE,
     SENSITIVE_WORDS,
+    normalizeForMatch,
+    findSensitive,
+    WEATHER_CODE_MAP,
     getSeasonFactor,
     attributeBonus,
     keywordBonus,
@@ -316,6 +464,9 @@
     creditLevel,
     priceHistory,
     validateProduct,
+    openMeteoUrl,
+    weatherFromOpenMeteo,
+    degradedWeather,
     money,
     version: "2.0.0"
   };

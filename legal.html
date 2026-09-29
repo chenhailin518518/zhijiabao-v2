@@ -9,8 +9,8 @@
   <link rel="canonical" href="https://chenhailin518518.github.io/zhijiabao-v2/legal/">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=20260929a">
-  <link rel="stylesheet" href="styles-app.css?v=20260929a">
+  <link rel="stylesheet" href="styles.css?v=20260929b">
+  <link rel="stylesheet" href="styles-app.css?v=20260929b">
 </head>
 <body data-page="legal">
   <a class="skip-link" href="#main">跳到主要内容</a>
@@ -88,9 +88,8 @@
         <article class="panel">
           <h2>五、数据来源与素材版权</h2>
           <ul class="feature-list">
-            <li><strong>天气数据</strong>：Open-Meteo 公共接口（<a class="link-btn" href="https://open-meteo.com/" rel="noopener" target="_blank">open-meteo.com</a>），页面已标注来源，请求失败时降级为中性因子。</li>
-            <li><strong>二维码服务</strong>：api.qrserver.com（比价分享可选，非核心链路）。</li>
-            <li><strong>第三方跳转</strong>：比价页仅提供关键词检索跳转，不对第三方站点进行抓取或缓存。</li>
+            <li><strong>天气数据</strong>：在线模式由本站后端代为请求 Open-Meteo 公共接口（<a class="link-btn" href="https://open-meteo.com/" rel="noopener" target="_blank">open-meteo.com</a>）并按景区缓存，浏览器不直接访问第三方；纯静态部署（无后端）时回退为浏览器直连。页面已标注来源，请求失败时降级为中性因子，不影响估价。</li>
+            <li><strong>第三方跳转</strong>：比价页仅提供关键词检索跳转，不对第三方站点进行抓取或缓存；站内不再依赖任何境外图片或二维码服务。</li>
             <li><strong>商品与文化资料</strong>：8 个景区介绍、非遗工艺与鉴别提示由团队整理，商品图片与示例数据为团队自制的演示素材，仅用于竞赛演示。</li>
             <li><strong>价格走势</strong>：按商品基准价确定性生成的演示序列，接口与页面均标注 <code>simulated: true</code>。</li>
             <li><strong>代码</strong>：项目代码以 MIT 协议开源，见仓库 LICENSE 文件。</li>
@@ -126,12 +125,12 @@
   <button class="back-to-top" id="backToTop" type="button" aria-label="回到顶部">↑</button>
   <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
 
-  <script src="site-data.js?v=20260929a"></script>
-  <script src="pricing.js?v=20260929a"></script>
-  <script src="api-services.js?v=20260929a"></script>
-  <script src="store.js?v=20260929a"></script>
-  <script src="script.js?v=20260929a"></script>
-  <script src="app-core.js?v=20260929a"></script>
-  <script src="app-account.js?v=20260929a"></script>
+  <script src="site-data.js?v=20260929b"></script>
+  <script src="pricing.js?v=20260929b"></script>
+  <script src="api-services.js?v=20260929b"></script>
+  <script src="store.js?v=20260929b"></script>
+  <script src="script.js?v=20260929b"></script>
+  <script src="app-core.js?v=20260929b"></script>
+  <script src="app-account.js?v=20260929b"></script>
 </body>
 </html>

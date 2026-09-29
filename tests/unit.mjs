@@ -218,4 +218,24 @@ test("敏感词表覆盖站外交易与违禁内容", () => {
   assert.ok(P.SENSITIVE_WORDS.length >= 10);
 });
 
+test("内容安全：分隔符与全角零宽写法不能绕过词表", () => {
+  assert.ok(P.findSensitive("支持刷单冲量").includes("刷单"));
+  assert.ok(P.findSensitive("支持刷 单冲量").includes("刷单"), "插入空格不应绕过");
+  assert.ok(P.findSensitive("支持刷*单冲量").includes("刷单"), "插入符号不应绕过");
+  assert.ok(P.findSensitive("支持刷　单冲量").includes("刷单"), "全角空格不应绕过");
+  assert.ok(P.findSensitive("加微\u200b信私聊").includes("加微信"), "零宽字符不应绕过");
+  assert.ok(P.findSensitive("我们私下转账吧").includes("私下转账"));
+
+  /* 正常描述不应误伤 */
+  assert.deepEqual(P.findSensitive("故宫文创冰箱贴，全新未拆封，带购买凭证"), []);
+
+  /* 发布校验走的是同一套匹配 */
+  const bad = P.validateProduct({
+    name: "故宫纪念书签", scenic: "故宫博物院", category: "书签", condition: "全新",
+    price: 20, original: 30, images: ["/uploads/a.png"], description: "支 持 刷 单 冲 量"
+  });
+  assert.equal(bad.valid, false, "归一化后仍应命中违规词");
+  assert.match(bad.errors.at(-1).message, /违规词/);
+});
+
 console.log(`\n单元测试通过：${passed} 项\n`);

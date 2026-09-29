@@ -189,6 +189,15 @@ assert.match(read("server/server.mjs"), /SD\.UPLOAD\.maxUploadBytes/, "服务端
 assert.doesNotMatch(read("app-core.js"), /12 \* 1024 \* 1024/, "前端不应再硬编码 12MB 原图上限");
 assert.doesNotMatch(read("server/server.mjs"), /3 \* 1024 \* 1024/, "服务端不应再硬编码 3MB 上传上限");
 
+/* --- 境外依赖：小程序的 request 合法域名必须已备案，境外域名配不进去 ---
+   天气改走自有后端代理，地名查询与二维码两个从未接线的服务已删除，
+   这里守住不让它们悄悄回来。 */
+const apiServices = read("api-services.js");
+assert.doesNotMatch(apiServices, /api\.qrserver\.com/, "不应再依赖境外二维码服务");
+assert.doesNotMatch(apiServices, /geocoding-api\.open-meteo\.com/, "不应再依赖境外地名查询");
+assert.ok(!/GeocodingService|QRCodeService/.test(apiServices), "死服务不应复活");
+assert.match(read("server/server.mjs"), /"\/api\/weather"/, "服务端应提供天气代理接口，避免前端直连境外域名");
+
 /* --- 移动端样式约定（沿用既有规则） --- */
 assert.match(
   script,

@@ -164,8 +164,8 @@ export function verifyPassword(password, stored) {
 export const SENSITIVE_WORDS = globalThis.ZhijiabaoPricing.SENSITIVE_WORDS;
 
 export function findSensitive(text) {
-  const body = String(text || "");
-  return SENSITIVE_WORDS.filter((w) => body.includes(w));
+  /* 复用共享实现：带归一化匹配，能挡住「刷 单」「加 微 信」这类分隔符规避写法 */
+  return globalThis.ZhijiabaoPricing.findSensitive(text);
 }
 
 /* =========================

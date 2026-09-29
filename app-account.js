@@ -1261,6 +1261,21 @@
     admin: App.initAdmin
   };
 
+  /*
+    演示声明：本作品是竞赛参赛原型，支付与担保交易为模拟流程。
+    统一在页脚注入一次，避免十个页面各写一遍、改一处漏九处。
+  */
+  function renderDemoNotice() {
+    const footerInner = document.querySelector(".site-footer .footer-inner");
+    if (!footerInner || footerInner.querySelector(".demo-notice")) return;
+    const note = document.createElement("p");
+    note.className = "muted small demo-notice";
+    note.textContent = "本作品为数字媒体竞赛参赛原型：付款、资金托管、放款与退款均为模拟流程，"
+      + "不产生真实资金往来；估价结论与价格走势为演示数据，不作为真实交易依据。";
+    footerInner.appendChild(note);
+  }
+  App.renderDemoNotice = renderDemoNotice;
+
   document.addEventListener("DOMContentLoaded", async () => {
     /* 引导只执行一次，避免脚本被重复引入或事件被重复派发时重复绑定 */
     if (root.__zhijiabaoBooted) return;
@@ -1272,6 +1287,7 @@
     }
     App.renderModeBadge();
     await App.renderHeaderAuth();
+    App.renderDemoNotice();
     Store.onChange(() => App.renderHeaderAuth());
 
     /* PWA：注册 Service Worker，弱网与离线也能打开已缓存的页面 */

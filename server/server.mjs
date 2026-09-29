@@ -251,6 +251,36 @@ route("GET", "/api/health", async (ctx) => ok(ctx.res, {
   conditions: CONDITIONS
 }));
 
+/*
+  天气代理：浏览器与小程序都不应直连境外域名（境外域名无法备案、也配不进
+  小程序的 request 合法域名），因此由后端代为请求 Open-Meteo 并按景区缓存。
+  纯静态部署没有后端时，前端会回退为直连，功能不受影响。
+*/
+const WEATHER_TTL = 15 * 60 * 1000;
+const weatherCache = new Map();
+route("GET", "/api/weather", async (ctx) => {
+  const scenic = String(ctx.query?.scenic || "").trim();
+  const row = SD.scenic(scenic);
+  if (!row) return fail(ctx.res, 400, "未知景区");
+
+  const hit = weatherCache.get(scenic);
+  if (hit && Date.now() - hit.at < WEATHER_TTL) {
+    return ok(ctx.res, { weather: hit.weather, cached: true });
+  }
+
+  try {
+    const resp = await fetch(P.openMeteoUrl(row.lat, row.lon), { signal: AbortSignal.timeout(8000) });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const weather = P.weatherFromOpenMeteo(await resp.json(), { scenic, city: row.city });
+    weatherCache.set(scenic, { at: Date.now(), weather });
+    return ok(ctx.res, { weather, cached: false });
+  } catch (e) {
+    /* 上游失败不缓存，返回中性因子让前端照常估价 */
+    console.warn("[weather] 上游请求失败:", scenic, e.message);
+    return ok(ctx.res, { weather: P.degradedWeather({ scenic, city: row.city }), degraded: true });
+  }
+}, { public: true });
+
 /* 公开运营概览：首页数据看板使用，仅聚合统计，不含任何用户隐私字段 */
 route("GET", "/api/stats/overview", async (ctx) => {
   const countOf = async (sql, args = []) => Number((await one(sql, args))?.c ?? 0);
