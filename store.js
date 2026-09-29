@@ -1054,9 +1054,9 @@
 
         if (route === "POST /api/uploads") {
           me();
-          if (!/^data:image\/(png|jpe?g|webp);base64,/.test(String(body.dataUrl || ""))) this.fail("仅支持 PNG / JPEG / WebP 格式的图片");
+          if (!/^data:image\/(png|jpe?g|webp);base64,/.test(String(body.dataUrl || ""))) this.fail(`仅支持 ${D.UPLOAD.acceptLabel} 格式的图片`);
           const size = Math.round(String(body.dataUrl).length * 0.75);
-          if (size > 3 * 1024 * 1024) this.fail("单张图片不能超过 3MB（已自动压缩，请重试）");
+          if (size > D.UPLOAD.maxUploadBytes) this.fail(`压缩后仍超过 ${D.formatMb(D.UPLOAD.maxUploadBytes)}，请换一张更小的图片`);
           /* 本地模式直接把 dataURL 存进商品记录 */
           return { ok: true, url: String(body.dataUrl) };
         }

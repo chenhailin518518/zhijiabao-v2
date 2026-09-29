@@ -62,7 +62,7 @@
         <div class="form-row full"><label for="pubDesc">品相说明</label>
           <textarea class="field" id="pubDesc" rows="3" maxlength="300" placeholder="说明使用痕迹、配件是否齐全、是否带包装与凭证">${esc(value.description || "")}</textarea>
           <p class="field-hint"><span id="descCount">0</span>/300</p></div>
-        <div class="form-row full"><label>商品实拍图 <em>*</em>（最多 6 张，自动压缩）</label>
+        <div class="form-row full"><label>商品实拍图 <em>*</em>（最多 ${D.UPLOAD.maxCount} 张，自动压缩）</label>
           <div class="upload-grid" id="pubImages"></div>
           <input type="file" id="pubImageInput" accept="image/*" multiple hidden>
           <p class="field-error" data-error="images"></p></div>
@@ -102,8 +102,8 @@
     $("#pubImageInput", card).addEventListener("change", async () => {
       const files = [...($("#pubImageInput", card).files || [])];
       if (!files.length) return;
-      if (publishState.images.length + files.length > 6) {
-        showToast("最多上传 6 张图片", "error");
+      if (publishState.images.length + files.length > D.UPLOAD.maxCount) {
+        showToast(`最多上传 ${D.UPLOAD.maxCount} 张图片`, "error");
         return;
       }
       setTask(`正在压缩并上传 ${files.length} 张图片…`);

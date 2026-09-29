@@ -207,10 +207,12 @@
   /* =========================
      图片：压缩 + 上传
      ========================= */
-  function compressImage(file, { maxSize = 1280, quality = 0.82 } = {}) {
+  function compressImage(file, { maxSize = D.UPLOAD.maxEdge, quality = D.UPLOAD.quality } = {}) {
     return new Promise((resolve, reject) => {
-      if (!file || !/^image\//.test(file.type)) return reject(new Error("请选择图片文件（PNG / JPEG / WebP）"));
-      if (file.size > 12 * 1024 * 1024) return reject(new Error("原图不能超过 12MB"));
+      if (!file || !/^image\//.test(file.type)) return reject(new Error(`请选择图片文件（${D.UPLOAD.acceptLabel}）`));
+      if (file.size > D.UPLOAD.maxOriginalBytes) {
+        return reject(new Error(`原图不能超过 ${D.formatMb(D.UPLOAD.maxOriginalBytes)}，请先裁剪或换一张`));
+      }
       const reader = new FileReader();
       reader.onerror = () => reject(new Error("图片读取失败"));
       reader.onload = () => {
@@ -1147,6 +1149,9 @@
     const upload = $("#imageUpload");
     const preview = $("#uploadPreview");
     let uploaded = null;
+    /* 提示文案取自共享的 UPLOAD 常量：调整上限时页面文案自动跟随，不会再与校验逻辑脱节 */
+    const hintEl = $("#uploadMeta");
+    if (hintEl) hintEl.textContent = D.uploadHint();
     bindOnce(upload, "change", async () => {
       const file = upload.files?.[0];
       if (!file) return;

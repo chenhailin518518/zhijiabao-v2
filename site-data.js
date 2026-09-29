@@ -116,7 +116,33 @@
     return "";
   };
 
+  /*
+    上传口径统一定义。
+    历史缺陷：页面提示「单张不超过 12MB」、服务端实际拒绝超过 3MB 的图片，
+    文案与实现不一致——用户按提示选了 8MB 的图仍会失败，且四处字面量各写一份，改一处漏三处。
+    这里把两个不同口径显式区分：
+      maxOriginalBytes 用户选择的原图上限，只用于提前拦住超大文件（避免读进内存）
+      maxUploadBytes   压缩后真正上传的图片上限，服务端按此拒绝
+  */
+  const UPLOAD = {
+    acceptLabel: "PNG / JPEG / WebP",
+    acceptMime: ["image/png", "image/jpeg", "image/webp"],
+    maxOriginalBytes: 12 * 1024 * 1024,
+    maxUploadBytes: 3 * 1024 * 1024,
+    maxCount: 6,
+    maxEdge: 1280,
+    quality: 0.82
+  };
+  const formatMb = (bytes) => `${Math.round(bytes / 1024 / 1024)}MB`;
+  /* 页面提示文案的唯一来源，保证文案与校验逻辑不会再各写一份 */
+  const uploadHint = () =>
+    `支持 ${UPLOAD.acceptLabel}，原图不超过 ${formatMb(UPLOAD.maxOriginalBytes)}；` +
+    `会自动压缩到长边 ${UPLOAD.maxEdge}px 再上传（单张上限 ${formatMb(UPLOAD.maxUploadBytes)}）`;
+
   root.ZhijiabaoData = {
+    UPLOAD,
+    formatMb,
+    uploadHint,
     SCENICS,
     CATEGORIES,
     CONDITIONS,

@@ -6,8 +6,11 @@
 import assert from "node:assert/strict";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
+/* 以副作用方式加载共享字典，用于校验页面文案与常量一致 */
+import "../site-data.js";
 
 const ROOT = resolve(import.meta.dirname, "..");
+const D = globalThis.ZhijiabaoData;
 const read = (file) => readFileSync(join(ROOT, file), "utf8");
 const script = read("script.js");
 const styles = read("styles.css");
@@ -173,6 +176,18 @@ for (const file of walkImages(join(ROOT, "assets", "img"))) {
   const kb = statSync(file).size / 1024;
   assert.ok(kb <= 200, `${file.replace(ROOT, "")} 体积 ${Math.round(kb)}KB 超过 200KB 上限，请执行 npm run optimize:images`);
 }
+
+/* --- 上传口径：页面文案与各处校验必须来自共享常量 ---
+   历史缺陷：页面写「单张不超过 12MB」、服务端实际拒绝超过 3MB，
+   用户按提示选图仍会失败；且 12MB/3MB/6 张在四五个文件里各写一份。 */
+const uploadHintText = read("estimate.html").match(/id="uploadMeta">([^<]*)<\/p>/)?.[1];
+assert.ok(uploadHintText, "estimate.html 应保留 #uploadMeta 上传提示");
+assert.equal(uploadHintText, D.uploadHint(), "上传提示文案应与 site-data.js 的 uploadHint() 保持一致");
+assert.match(read("app-core.js"), /D\.UPLOAD\.maxOriginalBytes/, "原图上限应取自共享常量 UPLOAD.maxOriginalBytes");
+assert.match(read("store.js"), /D\.UPLOAD\.maxUploadBytes/, "离线模式上传上限应取自共享常量 UPLOAD.maxUploadBytes");
+assert.match(read("server/server.mjs"), /SD\.UPLOAD\.maxUploadBytes/, "服务端上传上限应取自共享常量 UPLOAD.maxUploadBytes");
+assert.doesNotMatch(read("app-core.js"), /12 \* 1024 \* 1024/, "前端不应再硬编码 12MB 原图上限");
+assert.doesNotMatch(read("server/server.mjs"), /3 \* 1024 \* 1024/, "服务端不应再硬编码 3MB 上传上限");
 
 /* --- 移动端样式约定（沿用既有规则） --- */
 assert.match(

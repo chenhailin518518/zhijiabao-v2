@@ -24,7 +24,12 @@ const UPLOAD_DIR = process.env.UPLOAD_DIR || resolve(ROOT, "server", "uploads");
 mkdirSync(UPLOAD_DIR, { recursive: true });
 const PORT = Number(process.env.PORT || 8080);
 const SESSION_DAYS = 7;
-const BODY_LIMIT = 12 * 1024 * 1024;
+/*
+  请求体上限：唯一的大体积请求是 POST /api/uploads 的 base64 图片，
+  因此按「图片上限 × base64 膨胀 4/3 + 1MB 余量」推导，
+  不再手写第二个会与图片上限漂移的字面量（画像上限改大时这里自动跟随）。
+*/
+const BODY_LIMIT = Math.ceil((SD.UPLOAD.maxUploadBytes * 4) / 3) + 1024 * 1024;
 /* =========================
    通用工具
    ========================= */
@@ -1156,10 +1161,12 @@ route("POST", "/api/uploads", async (ctx) => {
   if (!rateLimit(`upload:${ctx.user.id}`, 30, 60000)) return fail(ctx.res, 429, "上传过于频繁");
   const dataUrl = String(ctx.body.dataUrl || "");
   const match = dataUrl.match(/^data:image\/(png|jpe?g|webp);base64,([A-Za-z0-9+/=]+)$/);
-  if (!match) return fail(ctx.res, 400, "仅支持 PNG / JPEG / WebP 格式的图片");
+  if (!match) return fail(ctx.res, 400, `仅支持 ${SD.UPLOAD.acceptLabel} 格式的图片`);
   const ext = match[1] === "jpeg" ? "jpg" : match[1];
   const buf = Buffer.from(match[2], "base64");
-  if (buf.length > 3 * 1024 * 1024) return fail(ctx.res, 413, "单张图片不能超过 3MB");
+  if (buf.length > SD.UPLOAD.maxUploadBytes) {
+    return fail(ctx.res, 413, `压缩后仍超过 ${SD.formatMb(SD.UPLOAD.maxUploadBytes)}，请换一张更小的图片`);
+  }
   const name = `${uid("img")}.${ext}`;
   await writeFile(join(UPLOAD_DIR, name), buf);
   return ok(ctx.res, { url: `/uploads/${name}`, size: buf.length });

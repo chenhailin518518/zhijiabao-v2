@@ -286,10 +286,11 @@
     if (has("description") || !partial) out.description = description;
 
     const images = Array.isArray(input.images) ? input.images : [];
+    const maxCount = D?.UPLOAD?.maxCount || 6;
     if (has("images") || !partial) {
       if (requireImages && images.length === 0) errors.push({ field: "images", message: "请至少上传一张商品实拍图" });
-      if (images.length > 6) errors.push({ field: "images", message: "最多上传 6 张图片" });
-      out.images = images.slice(0, 6);
+      if (images.length > maxCount) errors.push({ field: "images", message: `最多上传 ${maxCount} 张图片` });
+      out.images = images.slice(0, maxCount);
     }
 
     const hit = SENSITIVE_WORDS.filter((w) => `${out.name || ""} ${out.description || ""} ${out.tag || ""}`.includes(w));
