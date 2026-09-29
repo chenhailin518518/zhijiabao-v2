@@ -2,7 +2,7 @@
 
 面向景区文创的闲置流转平台：上传图片即可获得**可解释的 AI 估价**，查到官方价与二手成交参考价，并通过**平台担保交易**把闲置文创流转给下一位旅行者。覆盖 8 个景区、10 类文创商品。
 
-- 在线演示（纯静态，自动降级为本地演示模式）：<https://chenhailin518518.github.io/zhijiabao-demo/>
+- 在线演示（纯静态，自动降级为本地演示模式）：<https://chenhailin518518.github.io/zhijiabao-v2/>
 - 技术形态：原生 JavaScript + Node 零依赖后端（`node:http` + `node:sqlite`）+ SQLite
 - 参赛方向：全国大学生数字媒体科技作品及创意竞赛 · 移动与网络应用开发类
 

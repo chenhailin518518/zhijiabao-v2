@@ -4,4 +4,4 @@ Disallow: /admin/
 Disallow: /server/
 Disallow: /tests/
 
-Sitemap: https://chenhailin518518.github.io/zhijiabao-demo/sitemap.xml
+Sitemap: https://chenhailin518518.github.io/zhijiabao-v2/sitemap.xml

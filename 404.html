@@ -46,7 +46,7 @@
     /* GitHub Pages 项目站点会在任意未知路径返回本页，这里修正相对路径前缀 */
     (function () {
       var isPages = location.hostname.endsWith("github.io");
-      var base = isPages ? "/zhijiabao-demo/" : "./";
+      var base = isPages ? "/zhijiabao-v2/" : "./";
       document.getElementById("homeLink").href = base;
       document.getElementById("marketLink").href = base + "market/";
       document.getElementById("estimateLink").href = base + "estimate/";

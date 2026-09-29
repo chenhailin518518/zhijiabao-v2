@@ -10,7 +10,7 @@ get an **explainable AI valuation**, compare official / second-hand / suggested 
 marketplace, and complete the deal through **platform escrow** with after-sales support.
 Coverage: 8 scenic areas, 10 product categories.
 
-- Static demo (auto-falls back to a local-only mode): <https://chenhailin518518.github.io/zhijiabao-demo/>
+- Static demo (auto-falls back to a local-only mode): <https://chenhailin518518.github.io/zhijiabao-v2/>
 - Stack: vanilla JavaScript front end + a **zero-dependency** Node backend (`node:http` + `node:sqlite`)
 
 ## Run locally
