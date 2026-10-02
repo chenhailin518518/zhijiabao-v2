@@ -1,0 +1,204 @@
+<view class="page {{theme === 'dark' ? 'theme-dark' : ''}}">
+
+  <view class="head">
+    <text class="kicker">AI Valuation</text>
+    <text class="h1">填写基本信息，获取建议挂牌价</text>
+    <text class="lead">估价依据景区热度、品相、季节、供需四类系数计算，结果包含合理区间与置信度。实拍图仅作商品留档，不参与价格计算。</text>
+  </view>
+
+  <!-- 实拍图 -->
+  <view class="card">
+    <text class="label">商品实拍图（可选）</text>
+    <view class="upload" wx:if="{{!photo}}" bindtap="choosePhoto">
+      <text class="upload-icon">＋</text>
+      <text class="muted small">点击从相册选择或拍摄</text>
+    </view>
+    <view class="upload-preview" wx:else>
+      <image class="upload-img" src="{{photo}}" mode="aspectFill" bindtap="choosePhoto" />
+      <text class="upload-remove" bindtap="clearPhoto">✕ 移除</text>
+    </view>
+    <text class="hint">{{uploadHint}}</text>
+  </view>
+
+  <!-- 表单 -->
+  <view class="card">
+    <view class="form-row">
+      <text class="label">景区来源</text>
+      <picker mode="selector" range="{{scenicRange}}" value="{{scenicIndex}}" bindchange="onScenicChange">
+        <view class="picker-field">
+          <text>{{scenicRange[scenicIndex]}}</text>
+          <text class="picker-arrow">▾</text>
+        </view>
+      </picker>
+      <text class="hint {{weatherIsDegraded ? 'hint-warn' : ''}}">{{weatherText}}</text>
+    </view>
+
+    <view class="form-row">
+      <text class="label">商品品类</text>
+      <picker mode="selector" range="{{categoryRange}}" value="{{categoryIndex}}" bindchange="onCategoryChange">
+        <view class="picker-field">
+          <text>{{categoryRange[categoryIndex]}}</text>
+          <text class="picker-arrow">▾</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-row">
+      <text class="label">购买原价（元）</text>
+      <input class="field" type="number" value="{{originalPrice}}" maxlength="6" bindinput="onPriceInput" placeholder="景区购买时的小票金额" />
+    </view>
+
+    <view class="form-row">
+      <text class="label">购买时间</text>
+      <picker mode="date" value="{{boughtAt}}" bindchange="onDateChange">
+        <view class="picker-field">
+          <text>{{boughtAt || '请选择'}}</text>
+          <text class="picker-arrow">▾</text>
+        </view>
+      </picker>
+      <text class="hint">购入时间越久，保值衰减越明显</text>
+    </view>
+
+    <view class="form-row">
+      <text class="label">品相等级</text>
+      <picker mode="selector" range="{{conditionRange}}" value="{{conditionIndex}}" bindchange="onConditionChange">
+        <view class="picker-field">
+          <text>{{conditionRange[conditionIndex]}}</text>
+          <text class="picker-arrow">▾</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-row">
+      <text class="label">凭证与瑕疵</text>
+      <view class="switch-row">
+        <text class="switch-label">限定 / 联名款</text>
+        <switch checked="{{options.limited}}" color="#244853" data-key="limited" bindchange="onOptionChange" />
+      </view>
+      <view class="switch-row">
+        <text class="switch-label">带购买凭证或证书</text>
+        <switch checked="{{options.hasCertificate}}" color="#244853" data-key="hasCertificate" bindchange="onOptionChange" />
+      </view>
+      <view class="switch-row">
+        <text class="switch-label">原包装完整</text>
+        <switch checked="{{options.hasPackage}}" color="#244853" data-key="hasPackage" bindchange="onOptionChange" />
+      </view>
+      <view class="switch-row">
+        <text class="switch-label">存在瑕痕</text>
+        <switch checked="{{options.flawed}}" color="#244853" data-key="flawed" bindchange="onOptionChange" />
+      </view>
+    </view>
+
+    <view class="form-row">
+      <text class="label">文字描述（可选）</text>
+      <textarea class="field-area" value="{{note}}" maxlength="200" bindinput="onNoteInput" placeholder="例如：锦盒边角有一道压痕，扇面完好未使用" />
+      <text class="hint">描述中出现「限定」「带证书」「包装完整」等词时，将识别为加成项</text>
+    </view>
+
+    <button class="btn btn-block" bindtap="startEstimate" disabled="{{running}}">
+      {{running ? '正在计算…' : '启动 AI 估价'}}
+    </button>
+  </view>
+
+  <!-- 分步过程 -->
+  <view class="card" wx:if="{{running}}">
+    <view class="between">
+      <text class="h3">{{stepLabel}}</text>
+      <text class="muted small">{{stepDesc}}</text>
+    </view>
+    <view class="progress-track step-track">
+      <view class="progress-fill" style="width: {{stepProgress}}%"></view>
+    </view>
+  </view>
+
+  <!-- 结果 -->
+  <view class="card result-card" wx:if="{{result}}">
+    <text class="kicker">Valuation Result</text>
+    <view class="result-main">
+      <view>
+        <text class="result-label">建议挂牌价</text>
+        <text class="result-price">{{result.resultText}}</text>
+      </view>
+      <view class="result-side">
+        <text class="result-label">置信度</text>
+        <text class="result-confidence">{{result.confidence}}%</text>
+      </view>
+    </view>
+    <view class="result-range">{{result.rangeText}}</view>
+    <text class="muted small">合理成交区间</text>
+
+    <view class="grid-2 result-metrics">
+      <view class="stat">
+        <text class="stat-value">{{result.retentionText}}</text>
+        <text class="stat-label">景区保值率</text>
+      </view>
+      <view class="stat">
+        <text class="stat-value">{{result.futureText}}</text>
+        <text class="stat-label">一年后预估</text>
+      </view>
+    </view>
+
+    <view class="divider"></view>
+    <view class="between">
+      <text class="h3">系数拆解</text>
+      <text class="muted tiny">{{result.scenic}} · {{result.seasonLabel}}</text>
+    </view>
+    <view class="factor-row" wx:for="{{result.breakdown}}" wx:key="label">
+      <view class="grow">
+        <text class="factor-name">{{item.label}}</text>
+        <text class="factor-note">{{item.note}}</text>
+      </view>
+      <text class="factor-value">{{item.value}}</text>
+    </view>
+
+    <text class="hint">天气取值：{{result.weatherNote}}；购买原价 {{result.originalText}}，品相 {{result.condition}}。</text>
+
+    <view class="btn-row">
+      <button class="btn btn-mini" bindtap="goPublish">按此价发布</button>
+      <button class="btn btn-ghost btn-mini" bindtap="resetForm">重新估价</button>
+      <button class="btn btn-ghost btn-mini" bindtap="tipFormula">估价模型说明</button>
+    </view>
+  </view>
+
+  <!-- 记录 -->
+  <view class="section">
+    <view class="section-head">
+      <view>
+        <text class="kicker">History</text>
+        <text class="h2">估价记录</text>
+      </view>
+      <text wx:if="{{isLogin}}" class="muted small">{{history.length}} 条</text>
+    </view>
+
+    <view wx:if="{{!isLogin}}" class="card">
+      <text class="muted small">登录后估价记录将保存至账号，便于查看与对比。</text>
+      <view class="btn-row">
+        <button class="btn btn-mini" bindtap="goLogin">立即登录</button>
+      </view>
+    </view>
+
+    <view wx:elif="{{history.length === 0}}" class="empty">
+      <text class="empty-mark">◇</text>
+      <text>暂无估价记录</text>
+    </view>
+
+    <view wx:else class="card">
+      <view class="history-row" wx:for="{{history}}" wx:key="id">
+        <view class="grow">
+          <text class="product-name">{{item.scenic}} · {{item.condition}}</text>
+          <text class="muted tiny">{{item.category}} · 原价 {{item.original}} 元 · {{item.createdText}}</text>
+          <view class="tag-line mine-tags">
+            <text class="tag tag-tea">建议 {{item.resultText}}</text>
+            <text class="tag">区间 {{item.rangeText}}</text>
+            <text class="tag tag-jade">置信度 {{item.confidence}}%</text>
+          </view>
+        </view>
+        <text class="history-del" data-id="{{item.id}}" bindtap="deleteHistory">删除</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="foot-note">
+    <text class="muted tiny">估价结果依据公开参数与内置系数模型计算，仅供挂牌参考</text>
+  </view>
+</view>

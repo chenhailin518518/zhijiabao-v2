@@ -1,0 +1,54 @@
+.head {
+  margin-bottom: 28rpx;
+}
+
+/* 协议正文：字号略小于正文区，行距放开，长文可读 */
+.doc-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--qingdai);
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid var(--line);
+}
+
+.doc-p {
+  margin-top: 18rpx;
+  font-size: 26rpx;
+  color: var(--muted);
+  line-height: 1.85;
+}
+
+.doc-b {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.doc-list {
+  margin-top: 14rpx;
+}
+
+.doc-li {
+  display: flex;
+  gap: 12rpx;
+  margin-top: 14rpx;
+}
+
+.doc-dot {
+  color: var(--tea);
+  font-size: 28rpx;
+  line-height: 1.7;
+  flex-shrink: 0;
+}
+
+.doc-li-text {
+  flex: 1;
+  font-size: 26rpx;
+  color: var(--muted);
+  line-height: 1.85;
+}
+
+.foot-note {
+  margin-top: 36rpx;
+  text-align: center;
+}

@@ -1,0 +1,138 @@
+.head {
+  margin-bottom: 28rpx;
+}
+
+.upload {
+  height: 220rpx;
+  border-radius: 20rpx;
+  border: 2rpx dashed var(--line);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  background: var(--moon);
+}
+
+.upload-icon {
+  font-size: 52rpx;
+  color: var(--qingdai);
+  opacity: 0.6;
+}
+
+.upload-preview {
+  position: relative;
+}
+
+.upload-img {
+  width: 100%;
+  height: 320rpx;
+  border-radius: 20rpx;
+  background: var(--moon-2);
+}
+
+.upload-remove {
+  position: absolute;
+  right: 16rpx;
+  top: 16rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  background: rgba(19, 41, 50, 0.68);
+  color: #fff;
+}
+
+.hint-warn {
+  color: var(--tea);
+}
+
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14rpx 0;
+  border-bottom: 1rpx dashed var(--line);
+}
+
+.switch-row:last-child {
+  border-bottom: none;
+}
+
+.switch-label {
+  font-size: 27rpx;
+  color: var(--ink);
+}
+
+.step-track {
+  margin-top: 20rpx;
+}
+
+.result-card {
+  border-color: rgba(171, 132, 91, 0.42);
+}
+
+.result-main {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: 12rpx;
+}
+
+.result-label {
+  display: block;
+  font-size: 22rpx;
+  color: var(--muted);
+}
+
+.result-price {
+  display: block;
+  font-size: 68rpx;
+  font-weight: 700;
+  color: var(--cinnabar);
+  line-height: 1.16;
+}
+
+.result-side {
+  text-align: right;
+}
+
+.result-confidence {
+  display: block;
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--qingdai);
+}
+
+.result-range {
+  margin-top: 16rpx;
+  font-size: 34rpx;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.result-metrics {
+  margin-top: 24rpx;
+}
+
+.history-row {
+  display: flex;
+  gap: 20rpx;
+  align-items: flex-start;
+  padding: 22rpx 0;
+  border-bottom: 1rpx solid var(--line);
+}
+
+.history-row:last-child {
+  border-bottom: none;
+}
+
+.history-del {
+  font-size: 24rpx;
+  color: var(--cinnabar);
+  padding-left: 12rpx;
+}
+
+.foot-note {
+  margin-top: 40rpx;
+  text-align: center;
+}

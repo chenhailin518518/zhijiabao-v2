@@ -1,41 +1,9 @@
 {
-  "name": "zhijiabao",
-  "version": "3.0.0",
+  "name": "zhijiabao-miniprogram",
+  "version": "1.0.0",
   "private": true,
-  "description": "智价宝 - 景区文创闲置流转平台（MySQL 8 + Node 后端 + 原生前端）",
-  "type": "commonjs",
-  "engines": {
-    "node": ">=22"
-  },
-  "scripts": {
-    "start": "node server/server.mjs",
-    "dev": "node --watch server/server.mjs",
-    "test": "node tests/unit.mjs && node tests/smoke.mjs && node tests/api.mjs && node tests/dom.mjs",
-    "test:unit": "node tests/unit.mjs",
-    "test:smoke": "node tests/smoke.mjs",
-    "test:api": "node tests/api.mjs",
-    "test:dom": "node tests/dom.mjs",
-    "db:init": "node tools/db.mjs init",
-    "db:reset": "node tools/db.mjs reset",
-    "db:inspect": "node tools/db.mjs inspect",
-    "seed:demo": "node tools/seed-demo.mjs",
-    "mirror": "node tools/sync-mirrors.mjs",
-    "optimize:images": "python tools/optimize-images.py",
-    "hash:password": "node tools/hash-password.mjs"
-  },
-  "keywords": [
-    "景区文创",
-    "闲置流转",
-    "AI估价",
-    "担保交易",
-    "MySQL",
-    "数字媒体竞赛"
-  ],
-  "license": "MIT",
+  "description": "智价宝 · 景区文创闲置流转平台（微信小程序）",
   "dependencies": {
-    "mysql2": "^3.24.4"
-  },
-  "devDependencies": {
-    "jsdom": "^26.1.0"
+    "@tencent-ai/workbuddy-cloud-sdk": "^0.1.2-dev.1b37f73.202609222026"
   }
 }

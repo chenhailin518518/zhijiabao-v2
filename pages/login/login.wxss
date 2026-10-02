@@ -1,0 +1,100 @@
+.head {
+  margin-bottom: 28rpx;
+}
+
+.demo-card {
+  margin-bottom: 24rpx;
+}
+
+.demo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  margin-top: 16rpx;
+}
+
+.demo-item {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 18rpx 20rpx;
+  border-radius: 16rpx;
+  background: var(--moon);
+  border: 1rpx solid var(--line);
+}
+
+.demo-role {
+  flex-shrink: 0;
+  width: 80rpx;
+  text-align: center;
+  padding: 4rpx 0;
+  border-radius: 999rpx;
+  font-size: 21rpx;
+  background: rgba(36, 72, 83, 0.08);
+  color: var(--qingdai);
+}
+
+.demo-name {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.demo-phone {
+  margin-left: auto;
+  font-size: 23rpx;
+  color: var(--muted);
+}
+
+.tabs {
+  display: flex;
+  gap: 14rpx;
+  margin-bottom: 20rpx;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 18rpx 0;
+  border-radius: 16rpx;
+  font-size: 27rpx;
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  color: var(--muted);
+}
+
+.tab-on {
+  background: var(--qingdai);
+  border-color: var(--qingdai);
+  color: #f7f4ec;
+  font-weight: 600;
+}
+
+.code-row {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+}
+
+.code-btn {
+  flex-shrink: 0;
+  width: 220rpx;
+  font-size: 24rpx;
+}
+
+.code-submit {
+  margin-top: 20rpx;
+}
+
+.dev-code {
+  display: block;
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: var(--tea);
+}
+
+.foot-note {
+  margin-top: 32rpx;
+  text-align: center;
+  padding: 0 30rpx;
+}

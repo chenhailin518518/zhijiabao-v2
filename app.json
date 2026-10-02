@@ -1,0 +1,58 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/market/market",
+    "pages/estimate/estimate",
+    "pages/profile/profile",
+    "pages/product/product",
+    "pages/compare/compare",
+    "pages/orders/orders",
+    "pages/publish/publish",
+    "pages/messages/messages",
+    "pages/account/account",
+    "pages/login/login",
+    "pages/legal/legal"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#244853",
+    "navigationBarTitleText": "智价宝",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f7f4ec"
+  },
+  "tabBar": {
+    "color": "#728087",
+    "selectedColor": "#244853",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "assets/tab/home.png",
+        "selectedIconPath": "assets/tab/home-on.png"
+      },
+      {
+        "pagePath": "pages/market/market",
+        "text": "集市",
+        "iconPath": "assets/tab/market.png",
+        "selectedIconPath": "assets/tab/market-on.png"
+      },
+      {
+        "pagePath": "pages/estimate/estimate",
+        "text": "AI估价",
+        "iconPath": "assets/tab/estimate.png",
+        "selectedIconPath": "assets/tab/estimate-on.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "assets/tab/profile.png",
+        "selectedIconPath": "assets/tab/profile-on.png"
+      }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents"
+}

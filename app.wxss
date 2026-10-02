@@ -1,0 +1,691 @@
+/*
+  智价宝小程序 · 全局样式
+  视觉沿用 Web 版：新中式轻奢国风 —— 月白底、青黛主色、浅茶棕点缀。
+  设计变量放在 page 上（WXSS 没有 :root），深色主题通过页面根节点的 .theme-dark 覆盖。
+*/
+
+page {
+  --qingdai: #244853;
+  --qingdai-deep: #132932;
+  --qingdai-soft: #3e6f73;
+  --moon: #f7f4ec;
+  --moon-2: #eee8da;
+  --surface: #ffffff;
+  --tea: #ab845b;
+  --tea-soft: #d5bd92;
+  --cinnabar: #a84e43;
+  --jade: #5d8a7c;
+  --ink: #162127;
+  --muted: #5d6b72;
+  --line: rgba(36, 72, 83, 0.14);
+  --shadow: 0 12rpx 40rpx rgba(19, 41, 50, 0.08);
+
+  background: var(--moon);
+  color: var(--ink);
+  font-family: -apple-system, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif;
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+/* 深色主题：底与面都压暗，主色提亮以保证对比度 */
+.theme-dark {
+  --qingdai: #7fb0ad;
+  --qingdai-deep: #eef7f3;
+  --qingdai-soft: #9cc4bf;
+  --moon: #10191d;
+  --moon-2: #16262b;
+  --surface: #1b2c32;
+  --tea: #d3a86d;
+  --tea-soft: #8f7443;
+  --cinnabar: #d77a6b;
+  --jade: #87b9a7;
+  --ink: #edf5f2;
+  --muted: #a9bcb9;
+  --line: rgba(236, 216, 176, 0.18);
+  --shadow: 0 12rpx 40rpx rgba(0, 0, 0, 0.32);
+}
+
+/*
+  根容器自带背景。
+  只把变量放在 page 上是不够的：.theme-dark 挂在根 view 上，
+  而 page 自身的 --moon 仍是浅色，切暗色时会出现「浅底 + 浅字」。
+  这里让根 view 用自己的 --moon 铺满视口，两套主题都成立。
+*/
+.page {
+  min-height: 100vh;
+  padding: 24rpx 28rpx 60rpx;
+  box-sizing: border-box;
+  background: var(--moon);
+}
+
+/* ============ 排版 ============ */
+.kicker {
+  font-size: 22rpx;
+  letter-spacing: 3rpx;
+  text-transform: uppercase;
+  color: var(--tea);
+  margin-bottom: 8rpx;
+}
+
+.h1 {
+  font-size: 46rpx;
+  font-weight: 700;
+  line-height: 1.32;
+  color: var(--ink);
+}
+
+.h2 {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.h3 {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.small {
+  font-size: 24rpx;
+}
+
+.tiny {
+  font-size: 22rpx;
+}
+
+.strong {
+  font-weight: 600;
+}
+
+.center {
+  text-align: center;
+}
+
+.lead {
+  color: var(--muted);
+  font-size: 26rpx;
+  line-height: 1.72;
+  margin-top: 12rpx;
+}
+
+/* ============ 区块 ============ */
+.section {
+  margin-top: 40rpx;
+}
+
+.section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.card {
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  border-radius: 24rpx;
+  padding: 28rpx;
+  box-shadow: var(--shadow);
+}
+
+.card + .card {
+  margin-top: 20rpx;
+}
+
+.hero {
+  position: relative;
+  border-radius: 28rpx;
+  padding: 44rpx 32rpx;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1b3a44 0%, #2f5f60 52%, #7a5f3c 100%);
+  color: #f7f4ec;
+}
+
+.hero .h1,
+.hero .muted,
+.hero .lead {
+  color: #f7f4ec;
+}
+
+.hero .kicker {
+  color: rgba(247, 244, 236, 0.78);
+}
+
+.hero-glow {
+  position: absolute;
+  right: -80rpx;
+  top: -80rpx;
+  width: 320rpx;
+  height: 320rpx;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(213, 189, 146, 0.42), rgba(213, 189, 146, 0));
+}
+
+/* ============ 按钮 ============ */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 88rpx;
+  padding: 0 34rpx;
+  border-radius: 20rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  background: var(--qingdai);
+  color: #f7f4ec;
+  border: none;
+  line-height: 1;
+}
+
+.btn::after {
+  border: none;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--qingdai);
+  border: 2rpx solid var(--qingdai);
+}
+
+.btn-tea {
+  background: var(--tea);
+  color: #fff;
+}
+
+.btn-danger {
+  background: var(--cinnabar);
+  color: #fff;
+}
+
+.btn-mini {
+  height: 62rpx;
+  padding: 0 24rpx;
+  font-size: 24rpx;
+  border-radius: 14rpx;
+  font-weight: 500;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn[disabled],
+.btn-disabled {
+  opacity: 0.45;
+}
+
+.btn-row {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 20rpx;
+  flex-wrap: wrap;
+}
+
+/* ============ 标签 ============ */
+.tag {
+  display: inline-block;
+  padding: 6rpx 18rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  background: rgba(36, 72, 83, 0.08);
+  color: var(--qingdai);
+  line-height: 1.5;
+}
+
+.tag-tea {
+  background: rgba(171, 132, 91, 0.14);
+  color: #8a6a42;
+}
+
+.tag-jade {
+  background: rgba(120, 156, 143, 0.18);
+  color: #4d7568;
+}
+
+.tag-cinnabar {
+  background: rgba(168, 78, 67, 0.13);
+  color: #8f4038;
+}
+
+.tag-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+/* ============ 表单 ============ */
+.field {
+  width: 100%;
+  height: 88rpx;
+  padding: 0 24rpx;
+  border-radius: 18rpx;
+  border: 1rpx solid var(--line);
+  background: var(--moon);
+  color: var(--ink);
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+.field-area {
+  width: 100%;
+  min-height: 150rpx;
+  padding: 20rpx 24rpx;
+  border-radius: 18rpx;
+  border: 1rpx solid var(--line);
+  background: var(--moon);
+  color: var(--ink);
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+.picker-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 88rpx;
+  padding: 0 24rpx;
+  border-radius: 18rpx;
+  border: 1rpx solid var(--line);
+  background: var(--moon);
+  font-size: 28rpx;
+}
+
+.picker-arrow {
+  color: var(--muted);
+  font-size: 22rpx;
+}
+
+.label {
+  display: block;
+  font-size: 26rpx;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+  color: var(--ink);
+}
+
+.hint {
+  font-size: 22rpx;
+  color: var(--muted);
+  margin-top: 10rpx;
+  line-height: 1.6;
+}
+
+.form-row {
+  margin-bottom: 26rpx;
+}
+
+/* ============ 布局 ============ */
+.row {
+  display: flex;
+  align-items: center;
+}
+
+.between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gap-sm {
+  gap: 12rpx;
+}
+
+.gap {
+  gap: 20rpx;
+}
+
+.wrap {
+  flex-wrap: wrap;
+}
+
+.grow {
+  flex: 1;
+  min-width: 0;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12rpx;
+}
+
+.divider {
+  height: 1rpx;
+  background: var(--line);
+  margin: 24rpx 0;
+}
+
+.ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ============ 价格 ============ */
+.price {
+  color: var(--cinnabar);
+  font-weight: 700;
+  font-size: 36rpx;
+}
+
+.price-origin {
+  color: var(--muted);
+  font-size: 22rpx;
+  text-decoration: line-through;
+  margin-left: 10rpx;
+}
+
+/* ============ 商品卡片 ============ */
+.product {
+  display: flex;
+  gap: 20rpx;
+  padding: 20rpx;
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  border-radius: 22rpx;
+  box-shadow: var(--shadow);
+}
+
+.product + .product {
+  margin-top: 18rpx;
+}
+
+.product-thumb {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 16rpx;
+  background: var(--moon-2);
+  flex-shrink: 0;
+}
+
+.product-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.product-meta {
+  font-size: 22rpx;
+  color: var(--muted);
+  margin-top: 8rpx;
+}
+
+.product-desc {
+  font-size: 24rpx;
+  color: var(--muted);
+  margin-top: 10rpx;
+  line-height: 1.55;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.product-foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 12rpx;
+}
+
+/* ============ 列表行 ============ */
+.list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 26rpx 0;
+  border-bottom: 1rpx solid var(--line);
+}
+
+.list-row:last-child {
+  border-bottom: none;
+}
+
+.list-row-label {
+  font-size: 28rpx;
+  color: var(--ink);
+}
+
+.list-row-value {
+  font-size: 26rpx;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+/* ============ 统计 ============ */
+.stat {
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  border-radius: 20rpx;
+  padding: 22rpx 16rpx;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--qingdai);
+  line-height: 1.3;
+}
+
+.stat-label {
+  font-size: 22rpx;
+  color: var(--muted);
+  margin-top: 6rpx;
+}
+
+/* ============ 空态与加载 ============ */
+.empty {
+  padding: 80rpx 40rpx;
+  text-align: center;
+  color: var(--muted);
+  font-size: 26rpx;
+  line-height: 1.8;
+}
+
+.empty-mark {
+  font-size: 60rpx;
+  opacity: 0.35;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.loading-tip {
+  padding: 48rpx;
+  text-align: center;
+  color: var(--muted);
+  font-size: 26rpx;
+}
+
+/* ============ 模式徽标 ============ */
+.mode-badge {
+  display: inline-block;
+  padding: 8rpx 20rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  background: rgba(171, 132, 91, 0.16);
+  color: #8a6a42;
+}
+
+/* ============ 进度 ============ */
+.progress-track {
+  height: 10rpx;
+  border-radius: 999rpx;
+  background: var(--moon-2);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, var(--qingdai), var(--tea));
+  transition: width 0.4s ease;
+}
+
+/* ============ 系数拆解 ============ */
+.factor-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18rpx 0;
+  border-bottom: 1rpx dashed var(--line);
+}
+
+.factor-row:last-child {
+  border-bottom: none;
+}
+
+.factor-name {
+  font-size: 26rpx;
+  color: var(--ink);
+}
+
+.factor-note {
+  font-size: 21rpx;
+  color: var(--muted);
+  margin-top: 4rpx;
+  line-height: 1.5;
+}
+
+.factor-value {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--qingdai);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ============ 订单时间轴 ============ */
+.timeline-item {
+  display: flex;
+  gap: 18rpx;
+  padding-bottom: 24rpx;
+  position: relative;
+}
+
+.timeline-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: var(--qingdai);
+  margin-top: 12rpx;
+  flex-shrink: 0;
+}
+
+.timeline-body {
+  flex: 1;
+  border-bottom: 1rpx solid var(--line);
+  padding-bottom: 20rpx;
+}
+
+.timeline-item:last-child .timeline-body {
+  border-bottom: none;
+}
+
+/* ============ 协议长文 ============ */
+.doc h3 {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin: 32rpx 0 12rpx;
+  color: var(--qingdai);
+}
+
+.doc p {
+  font-size: 26rpx;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 12rpx;
+}
+
+/* ============ 页面内浮层（举报面板，templates/report-sheet.wxml） ============ */
+.sheet-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 90;
+  background: rgba(19, 41, 50, 0.45);
+  display: flex;
+  align-items: flex-end;
+}
+
+.sheet {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 32rpx 32rpx 44rpx;
+  border-radius: 28rpx 28rpx 0 0;
+  background: var(--surface);
+  max-height: 82vh;
+  overflow-y: auto;
+}
+
+.sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24rpx;
+}
+
+.sheet-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.sheet-close {
+  font-size: 30rpx;
+  color: var(--muted);
+  padding: 0 8rpx;
+}
+
+.reason-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+  margin-bottom: 28rpx;
+}
+
+.reason-chip {
+  padding: 12rpx 26rpx;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  background: var(--moon);
+  border: 1rpx solid var(--line);
+  color: var(--muted);
+}
+
+.reason-chip-on {
+  background: var(--cinnabar);
+  border-color: var(--cinnabar);
+  color: #fff;
+  font-weight: 600;
+}
+
+.sheet-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 18rpx;
+  margin-top: 32rpx;
+}

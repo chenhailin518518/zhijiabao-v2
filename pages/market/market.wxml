@@ -1,0 +1,157 @@
+<view class="page {{theme === 'dark' ? 'theme-dark' : ''}}">
+
+  <view class="head">
+    <text class="kicker">Second-hand Market</text>
+    <text class="h1">个人闲置与商户尾货集中流转</text>
+    <text class="lead">商品经发布校验与平台审核后上架，支持多图实拍、商品问答、收藏与降价提醒；全部交易纳入平台担保。</text>
+  </view>
+
+  <!-- 搜索 -->
+  <view class="search-box">
+    <input
+      class="search-input"
+      value="{{keyword}}"
+      maxlength="40"
+      placeholder="搜索商品、景区或描述关键词"
+      confirm-type="search"
+      bindinput="onKeywordInput"
+      bindconfirm="onSearch"
+    />
+    <text wx:if="{{keyword}}" class="search-clear" bindtap="clearKeyword">✕</text>
+    <text class="search-btn" bindtap="onSearch">搜索</text>
+  </view>
+
+  <!-- 分区 -->
+  <view class="segments">
+    <text
+      wx:for="{{segments}}"
+      wx:key="key"
+      class="segment {{segment === item.key ? 'segment-on' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="switchSegment"
+    >{{item.label}}</text>
+  </view>
+
+  <!-- 筛选 -->
+  <view class="filters">
+    <picker class="filter" mode="selector" range="{{scenicRange}}" value="{{scenicIndex}}" bindchange="onScenicChange">
+      <view class="filter-inner">
+        <text class="filter-text {{scenicIndex > 0 ? 'filter-on' : ''}}">{{scenicRange[scenicIndex]}}</text>
+        <text class="filter-arrow">▾</text>
+      </view>
+    </picker>
+    <picker class="filter" mode="selector" range="{{categoryRange}}" value="{{categoryIndex}}" bindchange="onCategoryChange">
+      <view class="filter-inner">
+        <text class="filter-text {{categoryIndex > 0 ? 'filter-on' : ''}}">{{categoryRange[categoryIndex]}}</text>
+        <text class="filter-arrow">▾</text>
+      </view>
+    </picker>
+    <picker class="filter" mode="selector" range="{{tagRange}}" value="{{tagIndex}}" bindchange="onTagChange">
+      <view class="filter-inner">
+        <text class="filter-text {{tagIndex > 0 ? 'filter-on' : ''}}">{{tagRange[tagIndex]}}</text>
+        <text class="filter-arrow">▾</text>
+      </view>
+    </picker>
+  </view>
+
+  <view class="between result-bar">
+    <text class="muted small">共 {{total}} 件商品</text>
+    <view class="row gap-sm">
+      <picker mode="selector" range="{{sortRange}}" value="{{sortIndex}}" bindchange="onSortChange">
+        <text class="sort-text">{{sortRange[sortIndex]}} ▾</text>
+      </picker>
+      <text class="sort-text" bindtap="resetFilter">重置</text>
+    </view>
+  </view>
+
+  <!-- 列表 -->
+  <view wx:if="{{loading}}" class="loading-tip">正在加载商品…</view>
+
+  <view wx:elif="{{list.length === 0}}" class="empty">
+    <text class="empty-mark">◇</text>
+    <text>没有符合条件的商品</text>
+    <text class="muted small">可重置筛选条件后重试</text>
+  </view>
+
+  <view wx:else>
+    <view class="product" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="goProduct">
+      <image class="product-thumb" src="{{item.cover}}" mode="aspectFill" lazy-load />
+      <view class="product-body">
+        <text class="product-name">{{item.name}}</text>
+        <text class="product-meta">{{item.scenic}} · {{item.category}} · {{item.condition}}</text>
+        <view class="tag-line mine-tags">
+          <text class="tag">{{item.tag}}</text>
+          <text class="tag tag-tea">热度 {{item.heat}}</text>
+          <text wx:if="{{item.reviewCount}}" class="tag tag-jade">{{item.reviewScore}} 分 · {{item.reviewCount}} 评</text>
+        </view>
+        <view class="product-foot">
+          <view>
+            <text class="price">{{item.priceText}}</text>
+            <text class="price-origin">{{item.originalText}}</text>
+          </view>
+          <text class="muted tiny">{{item.freightText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="load-more">
+      <button wx:if="{{hasMore}}" class="btn btn-ghost btn-mini" bindtap="loadMore">加载更多</button>
+      <text wx:else class="muted small">已显示全部 {{total}} 件</text>
+    </view>
+  </view>
+
+  <!-- 我的发布 -->
+  <view class="section">
+    <view class="section-head">
+      <view>
+        <text class="kicker">My Listings</text>
+        <text class="h2">我的发布</text>
+      </view>
+      <text wx:if="{{isLogin}}" class="muted small">{{myProducts.length}} 件</text>
+    </view>
+
+    <view wx:if="{{!isLogin}}" class="card">
+      <text class="muted small">登录后可查看与管理本人发布的商品。</text>
+      <view class="btn-row">
+        <button class="btn btn-mini" bindtap="goLogin">立即登录</button>
+      </view>
+    </view>
+
+    <view wx:elif="{{myProducts.length === 0}}" class="empty">
+      <text class="empty-mark">◇</text>
+      <text>暂无发布记录</text>
+    </view>
+
+    <view wx:else class="card">
+      <view class="mine-row" wx:for="{{myProducts}}" wx:key="id">
+        <image class="mine-thumb" src="{{item.cover}}" mode="aspectFill" data-id="{{item.id}}" bindtap="goDetailMine" />
+        <view class="grow">
+          <text class="product-name" data-id="{{item.id}}" bindtap="goDetailMine">{{item.name}}</text>
+          <view class="tag-line mine-tags">
+            <text class="tag {{item.statusClass}}">{{item.status}}</text>
+            <text class="muted tiny">{{item.priceText}}</text>
+            <text class="muted tiny">浏览 {{item.views}} 次</text>
+          </view>
+          <text wx:if="{{item.rejectReason}}" class="reject">驳回原因：{{item.rejectReason}}</text>
+          <view class="btn-row" wx:if="{{item.myActions.length}}">
+            <button
+              wx:for="{{item.myActions}}"
+              wx:for-item="act"
+              wx:key="key"
+              class="btn btn-ghost btn-mini {{act.danger ? 'btn-danger-ghost' : ''}}"
+              data-id="{{item.id}}"
+              data-action="{{act.key}}"
+              data-name="{{item.name}}"
+              bindtap="mineAction"
+            >{{act.label}}</button>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 发布按钮 -->
+  <view class="publish-bar">
+    <button class="btn btn-block btn-tea" bindtap="goPublish">发布闲置</button>
+  </view>
+</view>

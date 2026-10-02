@@ -1,0 +1,231 @@
+.head {
+  margin-bottom: 28rpx;
+}
+
+/* ============ 会话 / 通知 切换 ============ */
+.segments {
+  display: flex;
+  gap: 14rpx;
+  margin-bottom: 24rpx;
+}
+
+.segment {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  border-radius: 16rpx;
+  font-size: 26rpx;
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  color: var(--muted);
+}
+
+.segment-on {
+  background: var(--qingdai);
+  border-color: var(--qingdai);
+  color: #f7f4ec;
+  font-weight: 600;
+}
+
+/* ============ 会话卡片（横向滚动） ============ */
+.conv-scroll {
+  white-space: nowrap;
+  margin-bottom: 20rpx;
+}
+
+.conv-card {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  width: 190rpx;
+  padding: 22rpx 16rpx;
+  margin-right: 16rpx;
+  border-radius: 20rpx;
+  background: var(--surface);
+  border: 2rpx solid var(--line);
+  box-sizing: border-box;
+  vertical-align: top;
+}
+
+.conv-card-on {
+  border-color: var(--qingdai);
+  box-shadow: var(--shadow);
+}
+
+.conv-avatar {
+  width: 68rpx;
+  height: 68rpx;
+  line-height: 68rpx;
+  text-align: center;
+  border-radius: 50%;
+  background: rgba(36, 72, 83, 0.1);
+  color: var(--qingdai);
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.conv-name {
+  margin-top: 10rpx;
+  font-size: 25rpx;
+  font-weight: 600;
+  color: var(--ink);
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.conv-last {
+  margin-top: 4rpx;
+  font-size: 21rpx;
+  color: var(--muted);
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.conv-badge {
+  position: absolute;
+  top: 10rpx;
+  right: 12rpx;
+  min-width: 32rpx;
+  height: 32rpx;
+  line-height: 32rpx;
+  padding: 0 8rpx;
+  border-radius: 999rpx;
+  background: var(--cinnabar);
+  color: #fff;
+  font-size: 20rpx;
+  text-align: center;
+}
+
+/* ============ 聊天 ============ */
+.chat-card {
+  padding: 24rpx;
+}
+
+.chat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid var(--line);
+}
+
+.chat-box {
+  height: 620rpx;
+  margin: 20rpx 0;
+}
+
+.bubble {
+  display: flex;
+  flex-direction: column;
+  max-width: 78%;
+  margin-bottom: 20rpx;
+  padding: 18rpx 22rpx;
+  border-radius: 18rpx;
+  word-break: break-all;
+}
+
+.bubble-theirs {
+  background: var(--moon-2);
+  color: var(--ink);
+  border-top-left-radius: 4rpx;
+}
+
+.bubble-mine {
+  margin-left: auto;
+  background: var(--qingdai);
+  color: #f7f4ec;
+  border-top-right-radius: 4rpx;
+}
+
+.bubble-text {
+  font-size: 27rpx;
+  line-height: 1.6;
+}
+
+.bubble-time {
+  margin-top: 8rpx;
+  font-size: 20rpx;
+  opacity: 0.65;
+  align-self: flex-end;
+}
+
+/* ============ 快捷回复 ============ */
+.quick-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid var(--line);
+}
+
+.chip {
+  padding: 8rpx 22rpx;
+  border-radius: 999rpx;
+  font-size: 23rpx;
+  background: var(--moon);
+  border: 1rpx solid var(--line);
+  color: var(--ink);
+}
+
+.chip-danger {
+  color: var(--cinnabar);
+  border-color: rgba(168, 78, 67, 0.35);
+}
+
+.input-bar {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-top: 20rpx;
+}
+
+.btn-send {
+  height: 88rpx;
+  flex-shrink: 0;
+  padding: 0 40rpx;
+}
+
+/* ============ 通知列表 ============ */
+.notice-bar {
+  margin-bottom: 18rpx;
+}
+
+.link-btn {
+  font-size: 24rpx;
+  color: var(--tea);
+}
+
+.notice {
+  position: relative;
+}
+
+.notice-unread {
+  border-left: 6rpx solid var(--tea);
+}
+
+.notice-body {
+  display: block;
+  margin-top: 10rpx;
+  font-size: 25rpx;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.notice-dot {
+  display: inline-block;
+  margin-top: 12rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 999rpx;
+  font-size: 20rpx;
+  background: rgba(171, 132, 91, 0.16);
+  color: #8a6a42;
+}
+
+.btn-row-center {
+  justify-content: center;
+}

@@ -1,0 +1,6 @@
+{
+  "usingComponents": {},
+  "navigationBarTitleText": "我的收藏与地址",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
+}

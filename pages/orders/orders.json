@@ -1,0 +1,6 @@
+{
+  "usingComponents": {},
+  "navigationBarTitleText": "订单与售后",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
+}

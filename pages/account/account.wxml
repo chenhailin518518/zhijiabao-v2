@@ -1,0 +1,120 @@
+<view class="page {{theme === 'dark' ? 'theme-dark' : ''}}">
+
+  <view class="tabs">
+    <text
+      wx:for="{{tabs}}"
+      wx:key="key"
+      class="tab {{tab === item.key ? 'tab-on' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="switchTab"
+    >{{item.label}}</text>
+  </view>
+
+  <view wx:if="{{loading}}" class="loading-tip">正在加载…</view>
+
+  <block wx:else>
+    <!-- 收藏 -->
+    <block wx:if="{{tab === 'favorites'}}">
+      <view wx:if="{{favorites.length === 0}}" class="empty">
+        <text class="empty-mark">☆</text>
+        <text>还没有收藏任何商品</text>
+        <text class="muted small">在商品详情页点击「收藏」即可加入</text>
+      </view>
+      <view class="card" wx:else>
+        <view class="fav-row" wx:for="{{favorites}}" wx:key="id">
+          <image class="fav-thumb" src="{{item.cover}}" mode="aspectFill" data-id="{{item.id}}" bindtap="goProduct" />
+          <view class="grow">
+            <text class="product-name" data-id="{{item.id}}" bindtap="goProduct">{{item.name}}</text>
+            <text class="muted tiny">{{item.scenic}} · {{item.condition}} · 收藏于 {{item.timeText}}</text>
+            <view class="tag-line mine-tags">
+              <text class="price small-price">{{item.priceText}}</text>
+              <text wx:if="{{item.alertText}}" class="tag tag-tea">{{item.alertText}}</text>
+              <text wx:if="{{item.status !== '在售'}}" class="tag tag-cinnabar">{{item.status}}</text>
+            </view>
+            <view class="btn-row">
+              <button class="btn btn-mini" data-id="{{item.id}}" data-price="{{item.price}}" bindtap="setAlert">降价提醒</button>
+              <button class="btn btn-ghost btn-mini" data-id="{{item.id}}" data-name="{{item.name}}" bindtap="removeFavorite">取消收藏</button>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 足迹 -->
+    <block wx:elif="{{tab === 'footprints'}}">
+      <view wx:if="{{footprints.length === 0}}" class="empty">
+        <text class="empty-mark">◇</text>
+        <text>还没有浏览记录</text>
+      </view>
+      <block wx:else>
+        <view class="between list-head">
+          <text class="muted small">共 {{footprints.length}} 条</text>
+          <text class="link-danger" bindtap="clearFootprints">清空足迹</text>
+        </view>
+        <view class="product" wx:for="{{footprints}}" wx:key="id" data-id="{{item.id}}" bindtap="goProduct">
+          <image class="product-thumb" src="{{item.cover}}" mode="aspectFill" />
+          <view class="product-body">
+            <text class="product-name">{{item.name}}</text>
+            <text class="product-meta">{{item.scenic}} · {{item.condition}} · {{item.timeText}}</text>
+            <view class="product-foot">
+              <text class="price">{{item.priceText}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </block>
+
+    <!-- 地址 -->
+    <block wx:else>
+      <view wx:if="{{addresses.length === 0 && !adding}}" class="empty">
+        <text class="empty-mark">◇</text>
+        <text>还没有收货地址</text>
+        <text class="muted small">下单前需要先添加一个</text>
+      </view>
+
+      <view class="card addr" wx:for="{{addresses}}" wx:key="id">
+        <view class="between">
+          <view class="grow">
+            <text class="h3">{{item.name}} · {{item.phone}}</text>
+            <text class="muted small addr-text">{{item.region}}{{item.detail}}</text>
+          </view>
+          <text wx:if="{{item.isDefault}}" class="tag tag-jade">默认</text>
+        </view>
+        <view class="btn-row">
+          <button wx:if="{{!item.isDefault}}" class="btn btn-ghost btn-mini" data-id="{{item.id}}" bindtap="setDefaultAddress">设为默认</button>
+          <button class="btn btn-ghost btn-mini btn-danger-ghost" data-id="{{item.id}}" bindtap="deleteAddress">删除</button>
+        </view>
+      </view>
+
+      <view class="card" wx:if="{{adding}}">
+        <text class="h3">新增收货地址</text>
+        <view class="form-row add-row">
+          <text class="label">收货人</text>
+          <input class="field" value="{{form.name}}" maxlength="20" data-key="name" bindinput="onFormInput" placeholder="姓名" />
+        </view>
+        <view class="form-row">
+          <text class="label">手机号</text>
+          <input class="field" type="number" value="{{form.phone}}" maxlength="11" data-key="phone" bindinput="onFormInput" placeholder="11 位手机号" />
+        </view>
+        <view class="form-row">
+          <text class="label">所在地区</text>
+          <input class="field" value="{{form.region}}" maxlength="30" data-key="region" bindinput="onFormInput" placeholder="省 / 市 / 区" />
+        </view>
+        <view class="form-row">
+          <text class="label">详细地址</text>
+          <input class="field" value="{{form.detail}}" maxlength="60" data-key="detail" bindinput="onFormInput" placeholder="街道门牌、学校或小区" />
+        </view>
+        <view class="switch-row">
+          <text class="switch-label">设为默认地址</text>
+          <switch checked="{{form.isDefault}}" color="#244853" bindchange="onDefaultChange" />
+        </view>
+        <view class="btn-row">
+          <button class="btn btn-mini" bindtap="saveAddress">保存地址</button>
+          <button class="btn btn-ghost btn-mini" bindtap="toggleAdd">取消</button>
+        </view>
+      </view>
+
+      <button wx:if="{{!adding}}" class="btn btn-block btn-ghost add-btn" bindtap="toggleAdd">新增收货地址</button>
+    </block>
+  </block>
+</view>

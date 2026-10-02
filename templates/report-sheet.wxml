@@ -1,0 +1,39 @@
+<!--
+  举报面板（页面内浮层）。
+  用法：页面 wxml 里 <include src="/templates/report-sheet.wxml" />，
+  data 里合入 utils/report.js 的 blank()，Page 里合入其 methods()。
+  依赖页面 data：reportVisible / reportReasons / reportReason / reportDetail / reportTarget
+-->
+<view wx:if="{{reportVisible}}" class="sheet-mask" bindtap="closeReport">
+  <view class="sheet" catchtap="noop">
+    <view class="sheet-head">
+      <text class="sheet-title">举报{{reportTarget.label ? ' · ' + reportTarget.label : ''}}</text>
+      <text class="sheet-close" bindtap="closeReport">✕</text>
+    </view>
+
+    <text class="label">举报理由（必选）</text>
+    <view class="reason-row">
+      <text
+        wx:for="{{reportReasons}}"
+        wx:key="*this"
+        class="reason-chip {{reportReason === item ? 'reason-chip-on' : ''}}"
+        data-reason="{{item}}"
+        bindtap="pickReportReason"
+      >{{item}}</text>
+    </view>
+
+    <text class="label">补充说明（选填）</text>
+    <textarea
+      class="field-area"
+      maxlength="300"
+      value="{{reportDetail}}"
+      bindinput="onReportDetail"
+      placeholder="描述具体情况，便于平台核实"
+    />
+
+    <view class="sheet-actions">
+      <button class="btn btn-ghost btn-mini" bindtap="closeReport">取消</button>
+      <button class="btn btn-danger btn-mini" bindtap="submitReport">提交举报</button>
+    </view>
+  </view>
+</view>

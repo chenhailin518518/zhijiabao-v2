@@ -1,0 +1,105 @@
+<view class="page {{theme === 'dark' ? 'theme-dark' : ''}}">
+
+  <view class="head">
+    <text class="kicker">Sign In</text>
+    <text class="h1">登录智价宝</text>
+    <text class="lead">
+      {{mode === 'online' ? '账号数据存于平台数据库。' : '当前为本地演示模式，验证码会直接显示在页面上，不会真实下发短信。'}}
+    </text>
+  </view>
+
+  <!-- 演示账号 -->
+  <view class="card demo-card">
+    <text class="label">演示账号（一键填充）</text>
+    <view class="demo-list">
+      <view
+        class="demo-item"
+        wx:for="{{demoAccounts}}"
+        wx:key="phone"
+        data-index="{{index}}"
+        bindtap="useDemo"
+      >
+        <text class="demo-role">{{item.label}}</text>
+        <text class="demo-name">{{item.nickname}}</text>
+        <text class="demo-phone">{{item.phone}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 页签 -->
+  <view class="tabs">
+    <text class="tab {{tab === 'login' ? 'tab-on' : ''}}" data-key="login" bindtap="switchTab">登录</text>
+    <text class="tab {{tab === 'register' ? 'tab-on' : ''}}" data-key="register" bindtap="switchTab">注册</text>
+    <text class="tab {{tab === 'reset' ? 'tab-on' : ''}}" data-key="reset" bindtap="switchTab">找回密码</text>
+  </view>
+
+  <view class="card">
+    <view class="form-row">
+      <text class="label">手机号</text>
+      <input class="field" type="number" maxlength="11" value="{{form.phone}}" data-key="phone" bindinput="onInput" placeholder="11 位手机号" />
+    </view>
+
+    <block wx:if="{{tab === 'login'}}">
+      <view class="form-row">
+        <text class="label">密码</text>
+        <input class="field" password value="{{form.password}}" data-key="password" bindinput="onInput" placeholder="至少 6 位" />
+      </view>
+      <button class="btn btn-block" bindtap="submitPassword" disabled="{{submitting}}">登录</button>
+
+      <view class="divider"></view>
+      <text class="muted small">也可以改用短信验证码登录</text>
+      <view class="code-row">
+        <input class="field grow" type="number" maxlength="6" value="{{form.code}}" data-key="code" bindinput="onInput" placeholder="6 位验证码" />
+        <button class="btn btn-ghost code-btn" bindtap="sendCode" disabled="{{counting > 0}}">
+          {{counting > 0 ? counting + 's' : '获取验证码'}}
+        </button>
+      </view>
+      <text wx:if="{{devCode}}" class="dev-code">演示模式验证码：{{devCode}}</text>
+      <button class="btn btn-block btn-ghost code-submit" bindtap="submitCode" disabled="{{submitting}}">验证码登录</button>
+    </block>
+
+    <block wx:elif="{{tab === 'register'}}">
+      <view class="form-row">
+        <text class="label">昵称</text>
+        <input class="field" maxlength="16" value="{{form.nickname}}" data-key="nickname" bindinput="onInput" placeholder="2-16 个字符" />
+      </view>
+      <view class="form-row">
+        <text class="label">设置密码</text>
+        <input class="field" password value="{{form.password}}" data-key="password" bindinput="onInput" placeholder="至少 6 位" />
+      </view>
+      <view class="form-row">
+        <text class="label">验证码</text>
+        <view class="code-row">
+          <input class="field grow" type="number" maxlength="6" value="{{form.code}}" data-key="code" bindinput="onInput" placeholder="6 位验证码" />
+          <button class="btn btn-ghost code-btn" bindtap="sendCode" disabled="{{counting > 0}}">
+            {{counting > 0 ? counting + 's' : '获取验证码'}}
+          </button>
+        </view>
+        <text wx:if="{{devCode}}" class="dev-code">演示模式验证码：{{devCode}}</text>
+      </view>
+      <button class="btn btn-block" bindtap="doRegister">注册并登录</button>
+    </block>
+
+    <block wx:else>
+      <view class="form-row">
+        <text class="label">新密码</text>
+        <input class="field" password value="{{form.password}}" data-key="password" bindinput="onInput" placeholder="至少 6 位" />
+      </view>
+      <view class="form-row">
+        <text class="label">验证码</text>
+        <view class="code-row">
+          <input class="field grow" type="number" maxlength="6" value="{{form.code}}" data-key="code" bindinput="onInput" placeholder="6 位验证码" />
+          <button class="btn btn-ghost code-btn" bindtap="sendCode" disabled="{{counting > 0}}">
+            {{counting > 0 ? counting + 's' : '获取验证码'}}
+          </button>
+        </view>
+        <text wx:if="{{devCode}}" class="dev-code">演示模式验证码：{{devCode}}</text>
+      </view>
+      <button class="btn btn-block" bindtap="doReset">重置密码</button>
+    </block>
+  </view>
+
+  <view class="foot-note">
+    <text class="muted tiny">登录即表示同意《用户协议与隐私说明》；平台对商品、评价与站内消息进行敏感词过滤与人工审核</text>
+  </view>
+</view>

@@ -1,0 +1,164 @@
+<view class="page {{theme === 'dark' ? 'theme-dark' : ''}}">
+
+  <!-- 未登录 -->
+  <view wx:if="{{!loading && !isLogin}}" class="card login-card">
+    <text class="kicker">Profile Center</text>
+    <text class="h2">登录后可使用完整功能</text>
+    <text class="muted small login-desc">估价记录、收藏、订单与售后均与账号关联；集市浏览与 AI 估价无需登录即可使用。</text>
+    <view class="btn-row">
+      <button class="btn" bindtap="goLogin">立即登录</button>
+      <button class="btn btn-ghost" bindtap="goEstimate">体验 AI 估价</button>
+    </view>
+    <view class="divider"></view>
+    <view class="list-row" bindtap="goLegal">
+      <text class="list-row-label">用户协议与隐私说明</text>
+      <text class="list-row-value">查看 ›</text>
+    </view>
+    <view class="list-row" bindtap="toggleTheme">
+      <text class="list-row-label">主题</text>
+      <text class="list-row-value">{{theme === 'dark' ? '深色国风' : '月白国风'}} ›</text>
+    </view>
+  </view>
+
+  <!-- 已登录 -->
+  <block wx:if="{{isLogin}}">
+    <view class="card profile-head">
+      <view class="avatar">{{user.nickname[0]}}</view>
+      <view class="grow">
+        <text class="h2">{{user.nickname}}</text>
+        <text class="muted tiny">{{user.phone}} · {{user.city || '未设置城市'}}</text>
+        <view class="tag-line mine-tags">
+          <text class="tag tag-tea">信用分 {{user.credit}} · {{user.creditLevel}}</text>
+          <text class="tag {{user.idVerified ? 'tag-jade' : ''}}">{{user.idVerified ? '已实名' : '未实名'}}</text>
+          <text wx:if="{{user.isAdmin}}" class="tag tag-cinnabar">运营账号</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="credit-bar">
+      <view class="progress-track">
+        <view class="progress-fill" style="width: {{creditPercent}}%"></view>
+      </view>
+      <text class="muted tiny">信用分影响曝光与交易权限，完成实名认证、按时发货、获得好评均可加分</text>
+    </view>
+
+    <!-- 数据 -->
+    <view class="grid-4">
+      <view class="stat" bindtap="goAccount" data-tab="favorites">
+        <text class="stat-value">{{counts.favorites}}</text>
+        <text class="stat-label">收藏</text>
+      </view>
+      <view class="stat" bindtap="goMarket">
+        <text class="stat-value">{{counts.products}}</text>
+        <text class="stat-label">发布</text>
+      </view>
+      <view class="stat" bindtap="goOrders">
+        <text class="stat-value">{{counts.orders}}</text>
+        <text class="stat-label">订单</text>
+      </view>
+      <view class="stat" bindtap="goEstimate">
+        <text class="stat-value">{{counts.estimates}}</text>
+        <text class="stat-label">估价</text>
+      </view>
+    </view>
+
+    <!-- 资产 -->
+    <view class="card">
+      <view class="between">
+        <view>
+          <text class="muted tiny">账户余额</text>
+          <text class="balance">{{user.balanceText}}</text>
+        </view>
+        <button class="btn btn-ghost btn-mini" bindtap="withdraw">提现</button>
+      </view>
+      <text class="hint">订单完成后货款扣除 2% 服务费入账；提现为演示流程，不产生真实资金流转。</text>
+    </view>
+
+    <!-- 功能入口 -->
+    <view class="card">
+      <view class="list-row" bindtap="goOrders">
+        <text class="list-row-label">我的订单与售后</text>
+        <text class="list-row-value">{{counts.orders}} 单 ›</text>
+      </view>
+      <view class="list-row" bindtap="goMarket">
+        <text class="list-row-label">我的发布</text>
+        <text class="list-row-value">{{counts.products}} 件 ›</text>
+      </view>
+      <view class="list-row" bindtap="goAccount" data-tab="favorites">
+        <text class="list-row-label">我的收藏与降价提醒</text>
+        <text class="list-row-value">{{counts.favorites}} 件 ›</text>
+      </view>
+      <view class="list-row" bindtap="goAccount" data-tab="footprints">
+        <text class="list-row-label">浏览足迹</text>
+        <text class="list-row-value">查看 ›</text>
+      </view>
+      <view class="list-row" bindtap="goAccount" data-tab="addresses">
+        <text class="list-row-label">收货地址</text>
+        <text class="list-row-value">管理 ›</text>
+      </view>
+      <view class="list-row" bindtap="goMessages">
+        <text class="list-row-label">消息与通知</text>
+        <text class="list-row-value">
+          {{counts.unreadNotice > 0 ? counts.unreadNotice + ' 条未读' : '查看'}} ›
+        </text>
+      </view>
+    </view>
+
+    <!-- 账号设置 -->
+    <view class="card">
+      <view class="between">
+        <text class="h3">账号设置</text>
+        <text class="muted small" bindtap="toggleEdit">{{editing ? '收起' : '编辑资料'}}</text>
+      </view>
+
+      <block wx:if="{{editing}}">
+        <view class="form-row edit-row">
+          <text class="label">昵称</text>
+          <input class="field" value="{{form.nickname}}" maxlength="16" data-key="nickname" bindinput="onFormInput" />
+        </view>
+        <view class="form-row">
+          <text class="label">城市</text>
+          <input class="field" value="{{form.city}}" maxlength="20" data-key="city" bindinput="onFormInput" />
+        </view>
+        <view class="form-row">
+          <text class="label">简介</text>
+          <textarea class="field-area" value="{{form.bio}}" maxlength="60" data-key="bio" bindinput="onFormInput" />
+        </view>
+        <button class="btn btn-block btn-mini" bindtap="saveProfile">保存资料</button>
+      </block>
+
+      <block wx:else>
+        <view class="list-row" bindtap="verifyRealname">
+          <text class="list-row-label">实名认证</text>
+          <text class="list-row-value">{{user.idVerified ? '已认证' : '未认证'}} ›</text>
+        </view>
+        <view class="list-row" bindtap="toggleTheme">
+          <text class="list-row-label">主题</text>
+          <text class="list-row-value">{{theme === 'dark' ? '深色国风' : '月白国风'}} ›</text>
+        </view>
+        <view class="list-row" bindtap="goLegal">
+          <text class="list-row-label">用户协议与隐私说明</text>
+          <text class="list-row-value">查看 ›</text>
+        </view>
+        <view class="list-row" bindtap="resetDemo">
+          <text class="list-row-label">重置演示数据</text>
+          <text class="list-row-value">恢复到初始状态 ›</text>
+        </view>
+        <view class="list-row" bindtap="logout">
+          <text class="list-row-label">退出登录</text>
+          <text class="list-row-value">›</text>
+        </view>
+        <view class="list-row" bindtap="closeAccount">
+          <text class="list-row-label danger-text">注销账号</text>
+          <text class="list-row-value">›</text>
+        </view>
+      </block>
+    </view>
+  </block>
+
+  <view class="foot-note">
+    <text class="muted tiny">
+      当前为{{mode === 'online' ? '在线模式，数据存于平台数据库' : '本地演示模式，数据仅保存在本机'}}
+    </text>
+  </view>
+</view>

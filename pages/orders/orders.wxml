@@ -1,0 +1,114 @@
+<view class="page {{theme === 'dark' ? 'theme-dark' : ''}}">
+
+  <view class="head">
+    <text class="kicker">Orders &amp; Escrow</text>
+    <text class="h1">订单与售后</text>
+    <text class="lead">付款进入平台担保，确认收货后放款给卖家。当前为演示流程，不产生真实资金流转。</text>
+  </view>
+
+  <!-- 身份切换 -->
+  <view class="segments">
+    <text
+      wx:for="{{roles}}"
+      wx:key="key"
+      class="segment {{role === item.key ? 'segment-on' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="switchRole"
+    >{{item.label}}</text>
+  </view>
+
+  <!-- 状态页签 -->
+  <scroll-view class="status-scroll" scroll-x enable-flex>
+    <view class="status-tabs">
+      <text
+        wx:for="{{tabs}}"
+        wx:key="key"
+        class="tab {{status === item.key ? 'tab-on' : ''}}"
+        data-key="{{item.key}}"
+        bindtap="switchStatus"
+      >{{item.label}}<text wx:if="{{stats[item.statKey]}}" class="tab-count">{{stats[item.statKey]}}</text></text>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{loading}}" class="loading-tip">正在加载订单…</view>
+
+  <view wx:elif="{{orders.length === 0}}" class="empty">
+    <text class="empty-mark">◇</text>
+    <text>这里还没有订单</text>
+    <text class="muted small">前往集市浏览在售文创</text>
+    <view class="btn-row center-row">
+      <button class="btn btn-mini" bindtap="goMarket">去集市</button>
+    </view>
+  </view>
+
+  <block wx:else>
+    <view class="order" wx:for="{{orders}}" wx:key="id">
+      <view class="order-head">
+        <text class="muted tiny">{{item.roleLabel}} · {{item.createdText}}</text>
+        <text class="tag {{item.statusClass}}">{{item.status}}</text>
+      </view>
+
+      <view class="order-body" data-id="{{item.productId}}" bindtap="goProduct">
+        <image class="order-thumb" src="{{item.cover}}" mode="aspectFill" />
+        <view class="grow">
+          <text class="product-name">{{item.productName}}</text>
+          <text class="muted tiny">{{item.scenic}} · {{item.peerLabel}}</text>
+          <view class="tag-line mine-tags">
+            <text class="price small-price">{{item.priceText}}</text>
+            <text class="muted tiny">运费 {{item.freightText}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="order-total">
+        <text class="muted tiny">实付 {{item.totalText}}（含平台服务费 {{item.feeText}}）</text>
+        <text class="link" data-id="{{item.id}}" bindtap="toggleExpand">{{expanded === item.id ? '收起明细' : '查看明细'}}</text>
+      </view>
+
+      <!-- 明细 -->
+      <view class="order-detail" wx:if="{{expanded === item.id}}">
+        <view class="divider"></view>
+        <text class="h3">收货信息</text>
+        <view class="muted small detail-text" wx:if="{{item.address}}">
+          <view>{{item.address.name}} {{item.address.phone}}</view>
+          <view>{{item.address.region}}{{item.address.detail}}</view>
+        </view>
+
+        <block wx:if="{{item.expressCompany || item.trackingNo}}">
+          <text class="h3">物流</text>
+          <text class="muted small detail-text">{{item.expressCompany}} {{item.trackingNo}}</text>
+        </block>
+
+        <block wx:if="{{item.cancelReason}}">
+          <text class="h3">取消原因</text>
+          <text class="muted small detail-text">{{item.cancelReason}}</text>
+        </block>
+
+        <text class="h3">流转记录</text>
+        <view class="timeline-item" wx:for="{{item.timeline}}" wx:key="at" wx:for-item="node">
+          <view class="timeline-dot"></view>
+          <view class="timeline-body">
+            <view class="between">
+              <text class="factor-name">{{node.label}}</text>
+              <text class="muted tiny">{{node.atText}}</text>
+            </view>
+            <text class="factor-note" wx:if="{{node.extra}}">{{node.extra}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 操作 -->
+      <view class="btn-row" wx:if="{{item.actions.length}}">
+        <button
+          wx:for="{{item.actions}}"
+          wx:for-item="act"
+          wx:key="action"
+          class="{{act.css}} btn-mini"
+          data-id="{{item.id}}"
+          data-action="{{act.action}}"
+          bindtap="act"
+        >{{act.label}}</button>
+      </view>
+    </view>
+  </block>
+</view>

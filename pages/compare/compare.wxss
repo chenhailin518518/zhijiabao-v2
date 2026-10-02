@@ -1,0 +1,207 @@
+.head {
+  margin-bottom: 28rpx;
+}
+
+/* ============ 搜索（与集市页同一套观感） ============ */
+.search-box {
+  display: flex;
+  align-items: center;
+  height: 88rpx;
+  padding: 0 24rpx;
+  border-radius: 999rpx;
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.search-input {
+  flex: 1;
+  font-size: 27rpx;
+  color: var(--ink);
+}
+
+.search-clear {
+  padding: 0 16rpx;
+  color: var(--muted);
+  font-size: 26rpx;
+}
+
+.search-btn {
+  padding-left: 20rpx;
+  color: var(--qingdai);
+  font-size: 27rpx;
+  font-weight: 600;
+}
+
+/* ============ 筛选 ============ */
+.filters {
+  display: flex;
+  gap: 14rpx;
+  margin-top: 18rpx;
+}
+
+.filter {
+  flex: 1;
+  min-width: 0;
+}
+
+.filter-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 74rpx;
+  padding: 0 18rpx;
+  border-radius: 16rpx;
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+}
+
+.filter-text {
+  font-size: 24rpx;
+  color: var(--muted);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.filter-on {
+  color: var(--qingdai);
+  font-weight: 600;
+}
+
+.filter-arrow {
+  font-size: 20rpx;
+  color: var(--muted);
+  margin-left: 6rpx;
+}
+
+/* ============ 价格滑块 ============ */
+.range-card {
+  margin-top: 20rpx;
+  padding: 24rpx 28rpx 16rpx;
+}
+
+.range-value {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--qingdai);
+}
+
+.range-slider {
+  margin: 12rpx 0 0;
+}
+
+/* ============ 搜索历史 ============ */
+.history {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12rpx;
+  margin-top: 24rpx;
+  min-height: 52rpx;
+}
+
+.chip {
+  padding: 8rpx 22rpx;
+  border-radius: 999rpx;
+  font-size: 23rpx;
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  color: var(--ink);
+}
+
+.chip-platform {
+  background: rgba(36, 72, 83, 0.06);
+  color: var(--qingdai);
+}
+
+.link-btn {
+  font-size: 23rpx;
+  color: var(--tea);
+  text-decoration: underline;
+}
+
+/* ============ 平台入口 ============ */
+.platform-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12rpx;
+  margin-top: 22rpx;
+}
+
+.result-bar {
+  margin: 28rpx 0 18rpx;
+}
+
+.sort-text {
+  font-size: 24rpx;
+  color: var(--qingdai);
+}
+
+/* ============ 三价对照 ============ */
+.compare-box {
+  margin-top: 14rpx;
+  padding: 16rpx 18rpx;
+  border-radius: 16rpx;
+  background: var(--moon);
+  border: 1rpx solid var(--line);
+}
+
+.source-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6rpx 0;
+}
+
+.source-label {
+  font-size: 23rpx;
+  color: var(--muted);
+}
+
+.source-value {
+  font-size: 24rpx;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 建议价一行加重显示，是这一屏要突出的结论 */
+.source-row-on {
+  margin-top: 4rpx;
+  padding-top: 10rpx;
+  border-top: 1rpx dashed var(--line);
+}
+
+.source-label-on,
+.source-value-on {
+  color: var(--cinnabar);
+  font-weight: 700;
+}
+
+.source-value-on {
+  font-size: 28rpx;
+}
+
+.spread {
+  display: block;
+  margin-top: 6rpx;
+  font-size: 21rpx;
+  color: var(--jade);
+}
+
+.source-links {
+  display: flex;
+  gap: 24rpx;
+  margin-top: 14rpx;
+}
+
+.btn-row-center {
+  justify-content: center;
+}
+
+.foot-note {
+  margin-top: 36rpx;
+  text-align: center;
+  line-height: 1.7;
+}

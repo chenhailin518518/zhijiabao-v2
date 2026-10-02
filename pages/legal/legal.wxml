@@ -1,0 +1,33 @@
+<view class="page {{theme === 'dark' ? 'theme-dark' : ''}}">
+
+  <view class="head">
+    <text class="kicker">Terms &amp; Privacy</text>
+    <text class="h1">用户协议与隐私说明</text>
+    <text class="lead">最后更新：{{updatedAt}} · 适用于智价宝演示小程序及其配套服务</text>
+  </view>
+
+  <view class="card doc" wx:for="{{sections}}" wx:for-item="sec" wx:key="title">
+    <text class="doc-title">{{sec.title}}</text>
+
+    <block wx:for="{{sec.blocks}}" wx:for-item="blk" wx:key="k">
+      <!-- 段落 -->
+      <view wx:if="{{blk.type === 'p'}}" class="doc-p">
+        <text wx:for="{{blk.runs}}" wx:for-item="run" wx:key="k" class="{{run.b ? 'doc-b' : ''}}">{{run.t}}</text>
+      </view>
+
+      <!-- 要点列表 -->
+      <view wx:else class="doc-list">
+        <view class="doc-li" wx:for="{{blk.items}}" wx:for-item="it" wx:key="k">
+          <text class="doc-dot">·</text>
+          <text class="doc-li-text">
+            <text wx:for="{{it.runs}}" wx:for-item="run" wx:key="k" class="{{run.b ? 'doc-b' : ''}}">{{run.t}}</text>
+          </text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="foot-note">
+    <text class="muted tiny">如对上述条款有疑问，可通过项目仓库提交 issue 反馈。</text>
+  </view>
+</view>

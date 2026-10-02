@@ -1,0 +1,195 @@
+<view class="page {{theme === 'dark' ? 'theme-dark' : ''}}">
+
+  <view wx:if="{{loading}}" class="loading-tip">正在加载商品…</view>
+
+  <block wx:elif="{{product}}">
+    <!-- 图片 -->
+    <swiper wx:if="{{product.images.length > 1}}" class="gallery" indicator-dots circular>
+      <swiper-item wx:for="{{product.images}}" wx:key="*this">
+        <image class="gallery-img" src="{{item}}" mode="aspectFill" data-src="{{item}}" bindtap="previewImage" />
+      </swiper-item>
+    </swiper>
+    <image
+      wx:else
+      class="gallery-single"
+      src="{{product.images[0]}}"
+      mode="aspectFill"
+      data-src="{{product.images[0]}}"
+      bindtap="previewImage"
+    />
+
+    <!-- 主信息 -->
+    <view class="card">
+      <view class="tag-line">
+        <text class="tag">{{product.tag}}</text>
+        <text class="tag tag-tea">{{product.condition}}</text>
+        <text class="tag tag-jade">{{product.category}}</text>
+      </view>
+      <text class="h1 product-title">{{product.name}}</text>
+      <view class="price-row">
+        <text class="price big">{{product.priceText}}</text>
+        <text class="price-origin">{{product.originalText}}</text>
+        <text wx:if="{{product.discountText}}" class="tag tag-cinnabar">{{product.discountText}}</text>
+        <text class="muted small freight">{{product.freightText}}</text>
+      </view>
+      <view class="meta-grid">
+        <view class="meta-item">
+          <text class="muted tiny">景区来源</text>
+          <text class="meta-value">{{product.scenic}}</text>
+        </view>
+        <view class="meta-item">
+          <text class="muted tiny">热度</text>
+          <text class="meta-value">{{product.heat}}</text>
+        </view>
+        <view class="meta-item">
+          <text class="muted tiny">浏览</text>
+          <text class="meta-value">{{product.views}}</text>
+        </view>
+        <view class="meta-item">
+          <text class="muted tiny">上架</text>
+          <text class="meta-value">{{product.createdText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 卖家 -->
+    <view class="card">
+      <view class="between">
+        <view>
+          <text class="h3">{{product.seller.name}}</text>
+          <text class="muted tiny">信用 {{product.seller.credit}} · {{product.seller.level}}{{product.seller.city ? ' · ' + product.seller.city : ''}}</text>
+        </view>
+        <button class="btn btn-ghost btn-mini" bindtap="messageSeller">联系卖家</button>
+      </view>
+      <view class="tag-line mine-tags">
+        <text class="tag tag-tea">担保交易</text>
+        <text class="tag">确认收货后放款</text>
+        <text class="tag">支持售后</text>
+      </view>
+      <text class="report-link" bindtap="reportProduct">举报该商品 ›</text>
+    </view>
+
+    <!-- 描述 -->
+    <view class="card">
+      <text class="h3">商品描述</text>
+      <text class="desc-text">{{product.description || '卖家未填写详细描述'}}</text>
+      <text class="hint">商品编号 {{product.code}}；当前状态 {{product.status}}</text>
+    </view>
+
+    <!-- 价格走势 -->
+    <view class="card">
+      <view class="between">
+        <text class="h3">价格走势</text>
+        <text class="muted tiny">{{product.priceHistory.days}} 天 · 均价 ¥{{product.priceHistory.avg}}</text>
+      </view>
+      <canvas type="2d" id="priceChart" class="chart"></canvas>
+      <text class="hint">
+        区间 ¥{{product.priceHistory.low}} – ¥{{product.priceHistory.high}}，当前挂牌 ¥{{product.price}}
+      </text>
+    </view>
+
+    <!-- 景区文化 -->
+    <view class="card" wx:if="{{culture}}">
+      <view class="between">
+        <text class="h3">{{culture.id}} · 文创底稿</text>
+        <text class="tag tag-tea">{{culture.level}}</text>
+      </view>
+      <view class="culture-row">
+        <text class="culture-key">在地背景</text>
+        <text class="culture-val">{{culture.intro}}</text>
+      </view>
+      <view class="culture-row">
+        <text class="culture-key">叙事母题</text>
+        <text class="culture-val">{{culture.story}}</text>
+      </view>
+      <view class="culture-row">
+        <text class="culture-key">常见工艺</text>
+        <text class="culture-val">{{culture.craft}}</text>
+      </view>
+      <view class="culture-row">
+        <text class="culture-key">流通提示</text>
+        <text class="culture-val tip">{{culture.tip}}</text>
+      </view>
+    </view>
+
+    <!-- 问答 -->
+    <view class="card">
+      <view class="between">
+        <text class="h3">商品问答</text>
+        <text class="muted small" bindtap="ask">我要提问 ›</text>
+      </view>
+      <view wx:if="{{product.questions.length === 0}}" class="empty small-empty">
+        <text>还没有人提问</text>
+      </view>
+      <view class="qa" wx:for="{{product.questions}}" wx:key="id">
+        <text class="qa-q">问：{{item.body}}</text>
+        <text class="qa-meta">{{item.asker}} · {{item.createdText}}</text>
+        <text wx:if="{{item.answered}}" class="qa-a">答：{{item.answer}}</text>
+        <text wx:else class="qa-pending">卖家暂未回答</text>
+      </view>
+    </view>
+
+    <!-- 评价 -->
+    <view class="card">
+      <view class="between">
+        <text class="h3">买家评价</text>
+        <text class="muted small">
+          {{product.reviewCount ? product.reviewScore + ' 分 · ' + product.reviewCount + ' 条' : '暂无评价'}}
+        </text>
+      </view>
+      <view wx:if="{{product.reviews.length === 0}}" class="empty small-empty">
+        <text>完成交易后才会产生评价</text>
+      </view>
+      <view class="review" wx:for="{{product.reviews}}" wx:key="id">
+        <view class="between">
+          <text class="review-name">{{item.nickname}}</text>
+          <text class="review-star">{{item.stars}}</text>
+        </view>
+        <text class="review-text">{{item.content}}</text>
+        <text class="muted tiny">{{item.createdText}}</text>
+      </view>
+    </view>
+
+    <!-- 同类推荐 -->
+    <view class="section" wx:if="{{product.similar.length}}">
+      <view class="section-head">
+        <view>
+          <text class="kicker">Similar</text>
+          <text class="h2">同景区同品类</text>
+        </view>
+      </view>
+      <view class="product" wx:for="{{product.similar}}" wx:key="id" data-id="{{item.id}}" bindtap="goProduct">
+        <image class="product-thumb" src="{{item.cover}}" mode="aspectFill" />
+        <view class="product-body">
+          <text class="product-name">{{item.name}}</text>
+          <text class="product-meta">{{item.condition}} · {{item.tag}}</text>
+          <view class="product-foot">
+            <text class="price">{{item.priceText}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 下单条 -->
+    <view class="buy-bar">
+      <view class="buy-addr" wx:if="{{isLogin && addresses.length}}">
+        <picker mode="selector" range="{{addresses}}" range-key="label" value="{{addressIndex}}" bindchange="onAddressChange">
+          <text class="buy-addr-text">收货地址：{{addresses[addressIndex].label}} ▾</text>
+        </picker>
+      </view>
+      <view class="buy-actions">
+        <view class="buy-icon" bindtap="toggleFavorite">
+          <text class="buy-icon-mark">{{favorited ? '★' : '☆'}}</text>
+          <text class="buy-icon-text">{{favorited ? '已收藏' : '收藏'}}</text>
+        </view>
+        <button class="btn buy-btn" bindtap="buy" disabled="{{!canBuy}}">
+          {{canBuy ? '立即购买 · ' + product.totalText : (product.status === '在售' ? '不能购买自己的商品' : product.status)}}
+        </button>
+        <button class="btn btn-ghost buy-btn-ghost" bindtap="ask">提问</button>
+      </view>
+    </view>
+    <view class="buy-spacer"></view>
+  </block>
+
+  <include src="/templates/report-sheet.wxml" />
+</view>

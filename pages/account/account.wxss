@@ -1,0 +1,82 @@
+.tabs {
+  display: flex;
+  gap: 14rpx;
+  margin-bottom: 30rpx;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 18rpx 0;
+  border-radius: 16rpx;
+  font-size: 27rpx;
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  color: var(--muted);
+}
+
+.tab-on {
+  background: var(--qingdai);
+  border-color: var(--qingdai);
+  color: #f7f4ec;
+  font-weight: 600;
+}
+
+.fav-row {
+  display: flex;
+  gap: 20rpx;
+  padding: 22rpx 0;
+  border-bottom: 1rpx solid var(--line);
+}
+
+.fav-row:last-child {
+  border-bottom: none;
+}
+
+.fav-thumb {
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 14rpx;
+  background: var(--moon-2);
+  flex-shrink: 0;
+}
+
+.mine-tags {
+  margin-top: 10rpx;
+}
+
+.small-price {
+  font-size: 30rpx;
+}
+
+.list-head {
+  margin-bottom: 16rpx;
+}
+
+.link-danger {
+  font-size: 24rpx;
+  color: var(--cinnabar);
+}
+
+.addr + .addr {
+  margin-top: 20rpx;
+}
+
+.addr-text {
+  display: block;
+  margin-top: 8rpx;
+  line-height: 1.6;
+}
+
+.add-row {
+  margin-top: 24rpx;
+}
+
+.add-btn {
+  margin-top: 20rpx;
+}
+
+.btn-danger-ghost {
+  border-color: var(--cinnabar);
+  color: var(--cinnabar);
+}

@@ -1,0 +1,245 @@
+.gallery,
+.gallery-single {
+  width: 100%;
+  height: 520rpx;
+  border-radius: 24rpx;
+  background: var(--moon-2);
+  margin-bottom: 24rpx;
+}
+
+.gallery-img {
+  width: 100%;
+  height: 520rpx;
+}
+
+.product-title {
+  display: block;
+  margin-top: 16rpx;
+  font-size: 40rpx;
+}
+
+.price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12rpx;
+  margin-top: 18rpx;
+  flex-wrap: wrap;
+}
+
+.price.big {
+  font-size: 56rpx;
+}
+
+.freight {
+  margin-left: auto;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12rpx;
+  margin-top: 26rpx;
+  padding-top: 24rpx;
+  border-top: 1rpx solid var(--line);
+}
+
+.meta-item {
+  text-align: center;
+}
+
+.meta-value {
+  display: block;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--qingdai);
+  margin-top: 6rpx;
+}
+
+.mine-tags {
+  margin-top: 18rpx;
+}
+
+/* 举报入口：弱化处理，避免在一屏里抢走「联系卖家」的注意力 */
+.report-link {
+  display: inline-block;
+  margin-top: 18rpx;
+  font-size: 23rpx;
+  color: var(--muted);
+}
+
+.desc-text {
+  display: block;
+  margin-top: 14rpx;
+  font-size: 27rpx;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.chart {
+  width: 100%;
+  height: 200rpx;
+  margin-top: 20rpx;
+}
+
+.culture-row {
+  margin-top: 18rpx;
+}
+
+.culture-key {
+  display: block;
+  font-size: 23rpx;
+  color: var(--tea);
+  letter-spacing: 1rpx;
+}
+
+.culture-val {
+  display: block;
+  font-size: 26rpx;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-top: 4rpx;
+}
+
+.culture-val.tip {
+  color: var(--ink);
+}
+
+.small-empty {
+  padding: 36rpx 0;
+}
+
+.qa {
+  padding: 22rpx 0;
+  border-bottom: 1rpx dashed var(--line);
+}
+
+.qa:last-child {
+  border-bottom: none;
+}
+
+.qa-q {
+  display: block;
+  font-size: 27rpx;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+.qa-meta {
+  display: block;
+  font-size: 22rpx;
+  color: var(--muted);
+  margin-top: 6rpx;
+}
+
+.qa-a {
+  display: block;
+  margin-top: 12rpx;
+  padding: 16rpx 20rpx;
+  border-radius: 14rpx;
+  background: rgba(36, 72, 83, 0.06);
+  font-size: 26rpx;
+  color: var(--ink);
+  line-height: 1.66;
+}
+
+.qa-pending {
+  display: block;
+  margin-top: 12rpx;
+  font-size: 24rpx;
+  color: var(--muted);
+}
+
+.review {
+  padding: 22rpx 0;
+  border-bottom: 1rpx dashed var(--line);
+}
+
+.review:last-child {
+  border-bottom: none;
+}
+
+.review-name {
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.review-star {
+  font-size: 24rpx;
+  color: var(--tea);
+}
+
+.review-text {
+  display: block;
+  margin-top: 10rpx;
+  font-size: 26rpx;
+  color: var(--muted);
+  line-height: 1.66;
+}
+
+/* 底部下单条 */
+.buy-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--surface);
+  border-top: 1rpx solid var(--line);
+  padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom));
+  z-index: 20;
+}
+
+.buy-addr {
+  margin-bottom: 14rpx;
+}
+
+.buy-addr-text {
+  font-size: 23rpx;
+  color: var(--muted);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.buy-actions {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+}
+
+.buy-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 104rpx;
+  flex-shrink: 0;
+}
+
+.buy-icon-mark {
+  font-size: 34rpx;
+  color: var(--tea);
+  line-height: 1.1;
+}
+
+.buy-icon-text {
+  font-size: 20rpx;
+  color: var(--muted);
+}
+
+.buy-btn {
+  flex: 1;
+  height: 84rpx;
+  font-size: 27rpx;
+}
+
+.buy-btn-ghost {
+  width: 150rpx;
+  height: 84rpx;
+  font-size: 26rpx;
+  flex-shrink: 0;
+}
+
+.buy-spacer {
+  height: 200rpx;
+}

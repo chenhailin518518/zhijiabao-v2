@@ -1,0 +1,150 @@
+<view class="page {{theme === 'dark' ? 'theme-dark' : ''}}">
+
+  <view class="head">
+    <text class="kicker">Messages</text>
+    <text class="h1">买卖沟通与系统通知</text>
+    <text class="lead">站内消息用于确认品相、包装与发货时间。为防范交易风险，平台将拦截「加微信」「站外转账」等话术，保障交易全程走担保流程。</text>
+  </view>
+
+  <!-- 未登录 -->
+  <view wx:if="{{!isLogin}}" class="card">
+    <view class="empty">
+      <text class="empty-mark">◇</text>
+      <text>登录后查看消息</text>
+      <text class="muted small">买卖沟通与系统通知统一汇总于此</text>
+    </view>
+    <view class="btn-row btn-row-center">
+      <button class="btn btn-mini" bindtap="goLogin">登录 / 注册</button>
+    </view>
+  </view>
+
+  <block wx:else>
+    <!-- 会话 / 通知 -->
+    <view class="segments">
+      <text
+        wx:for="{{tabs}}"
+        wx:key="key"
+        class="segment {{tab === item.key ? 'segment-on' : ''}}"
+        data-key="{{item.key}}"
+        bindtap="switchTab"
+      >{{item.label}}{{item.key === 'notice' && unreadNotices ? ' (' + unreadNotices + ')' : ''}}</text>
+    </view>
+
+    <!-- ============ 会话 ============ -->
+    <block wx:if="{{tab === 'chat'}}">
+      <view wx:if="{{loading}}" class="loading-tip">正在加载会话…</view>
+
+      <block wx:else>
+        <!-- 会话列表：会话少的时候横向铺开，选中态用青黛描边 -->
+        <scroll-view class="conv-scroll" scroll-x enable-flex wx:if="{{conversations.length}}">
+          <view
+            class="conv-card {{peerId === item.peerId ? 'conv-card-on' : ''}}"
+            wx:for="{{conversations}}"
+            wx:key="peerId"
+            data-peer="{{item.peerId}}"
+            data-name="{{item.name}}"
+            bindtap="selectConversation"
+          >
+            <view class="conv-avatar">{{item.initial}}</view>
+            <text class="conv-name">{{item.name}}</text>
+            <text class="conv-last">{{item.lastBody}}</text>
+            <text wx:if="{{item.unread}}" class="conv-badge">{{item.unread}}</text>
+          </view>
+        </scroll-view>
+
+        <view wx:else class="card">
+          <text class="muted small">暂无会话。在商品详情页点击「联系卖家」即可开始沟通。</text>
+        </view>
+
+        <!-- 聊天区 -->
+        <view class="card chat-card" wx:if="{{peerId}}">
+          <view class="chat-head">
+            <text class="strong">{{peerName}}</text>
+            <text class="muted tiny">信用分 {{peerCredit === '' || peerCredit === null ? '-' : peerCredit}}</text>
+          </view>
+
+          <scroll-view class="chat-box" scroll-y scroll-into-view="{{scrollInto}}" scroll-with-animation>
+            <view wx:if="{{chatLoading}}" class="loading-tip">正在加载会话…</view>
+            <block wx:else>
+              <view wx:if="{{chat.length === 0}}" class="loading-tip">暂无消息记录。</view>
+              <view
+                class="bubble {{item.mine ? 'bubble-mine' : 'bubble-theirs'}}"
+                wx:for="{{chat}}"
+                wx:key="id"
+                id="msg-{{item.id}}"
+              >
+                <text class="bubble-text">{{item.body}}</text>
+                <text class="bubble-time">{{item.atText}}</text>
+              </view>
+            </block>
+          </scroll-view>
+
+          <view class="quick-row">
+            <text
+              class="chip"
+              wx:for="{{quickReplies}}"
+              wx:key="*this"
+              data-text="{{item}}"
+              bindtap="useQuick"
+            >{{item}}</text>
+            <text class="chip chip-danger" bindtap="reportCurrent">举报该用户</text>
+          </view>
+
+          <view class="input-bar">
+            <input
+              class="field grow"
+              value="{{input}}"
+              maxlength="300"
+              placeholder="输入消息，禁止留下站外联系方式"
+              confirm-type="send"
+              bindinput="onInput"
+              bindconfirm="send"
+            />
+            <button class="btn btn-send" bindtap="send">发送</button>
+          </view>
+
+          <text class="hint">平台将拦截「加微信」「站外转账」等话术；请勿在沟通中泄露个人敏感信息。</text>
+        </view>
+      </block>
+    </block>
+
+    <!-- ============ 系统通知 ============ -->
+    <block wx:else>
+      <view class="between notice-bar">
+        <text class="muted small">共 {{notices.length}} 条通知，未读 {{unreadNotices}} 条</text>
+        <text class="link-btn" bindtap="markAllRead">全部标为已读</text>
+      </view>
+
+      <view wx:if="{{notices.length === 0}}" class="empty">
+        <text class="empty-mark">◇</text>
+        <text>暂无通知</text>
+        <text class="muted small">订单流转、审核结果与降价提醒将在此显示</text>
+      </view>
+
+      <!--
+        注意：wx:else 不能和 wx:for 写在同一个标签上。
+        编译器会先把 wx:for 展开成 block，wx:else 就配不到前面的 wx:if 了
+        （报 Bad attr `wx:else` with message: `wx:if not found`）。
+        所以这里用 block wx:else 包一层，wx:for 放在里面的 view 上。
+      -->
+      <block wx:else>
+        <view
+          class="card notice {{item.read ? '' : 'notice-unread'}}"
+          wx:for="{{notices}}"
+          wx:key="id"
+          data-link="{{item.link}}"
+          bindtap="goLink"
+        >
+          <view class="between">
+            <text class="strong">{{item.title}}</text>
+            <text class="muted tiny">{{item.atText}}</text>
+          </view>
+          <text class="notice-body">{{item.body}}</text>
+          <text wx:if="{{!item.read}}" class="notice-dot">未读</text>
+        </view>
+      </block>
+    </block>
+  </block>
+
+  <include src="/templates/report-sheet.wxml" />
+</view>

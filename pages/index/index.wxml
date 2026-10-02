@@ -1,0 +1,179 @@
+<view class="page {{theme === 'dark' ? 'theme-dark' : ''}}">
+
+  <!-- 首屏 -->
+  <view class="hero">
+    <view class="hero-glow"></view>
+    <text class="kicker">Scenic Cultural Creative</text>
+    <text class="h1">景区文创闲置价值评估与流转</text>
+    <text class="lead">AI 估价输出建议挂牌价，全网比价提供参考区间，担保交易保障货款两清。</text>
+    <view class="hero-badges">
+      <text class="hero-badge">{{mode === 'online' ? '在线模式' : '本地演示模式'}}</text>
+      <text class="hero-badge">{{categories.length}} 个品类 · {{scenics.length}} 个景区</text>
+    </view>
+  </view>
+
+  <!-- 平台实时数据 -->
+  <view class="section">
+    <view class="section-head">
+      <view>
+        <text class="kicker">Live Data</text>
+        <text class="h2">平台实时数据</text>
+      </view>
+    </view>
+    <view wx:if="{{loading}}" class="loading-tip">正在加载数据…</view>
+    <block wx:else>
+      <view
+        class="stat-row stat-row-{{group.items.length}}{{group.muted ? ' stat-row-muted' : ''}}"
+        wx:for="{{statGroups}}"
+        wx:for-item="group"
+        wx:key="key"
+      >
+        <view
+          class="stat{{item.score ? ' stat-score' : ''}}{{item.blank ? ' stat-blank' : ''}}"
+          wx:for="{{group.items}}"
+          wx:key="key"
+        >
+          <view class="stat-value-line">
+            <text wx:if="{{item.score}}" class="stat-star">★</text>
+            <text class="stat-value">{{item.value}}</text>
+          </view>
+          <text class="stat-label">{{item.label}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- 功能模块 -->
+  <view class="section">
+    <view class="section-head">
+      <view>
+        <text class="kicker">Core Modules</text>
+        <text class="h2">四个核心模块</text>
+      </view>
+    </view>
+    <view class="module" wx:for="{{modules}}" wx:key="key" data-url="{{item.url}}" data-tab="{{item.tab}}" bindtap="goModule">
+      <view class="module-head">
+        <text class="kicker">{{item.kicker}}</text>
+        <text class="module-title">{{item.title}}</text>
+      </view>
+      <text class="module-desc">{{item.desc}}</text>
+      <text class="module-arrow">进入 ›</text>
+    </view>
+  </view>
+
+  <!-- 品类 -->
+  <view class="section">
+    <view class="section-head">
+      <view>
+        <text class="kicker">Categories</text>
+        <text class="h2">按品类浏览</text>
+      </view>
+      <text class="muted small">点击进入集市筛选</text>
+    </view>
+    <view class="tag-line">
+      <text class="chip" wx:for="{{categories}}" wx:key="*this" data-category="{{item}}" bindtap="goCategory">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- 热门商品 -->
+  <view class="section">
+    <view class="section-head">
+      <view>
+        <text class="kicker">Popular Items</text>
+        <text class="h2">热门文创闲置</text>
+      </view>
+      <text class="muted small">按热度排序</text>
+    </view>
+    <view wx:if="{{!loading && hot.length === 0}}" class="empty">
+      <text class="empty-mark">◇</text>
+      <text>暂无在售商品</text>
+    </view>
+    <view class="product" wx:for="{{hot}}" wx:key="id" data-id="{{item.id}}" bindtap="goProduct">
+      <image class="product-thumb" src="{{item.cover}}" mode="aspectFill" lazy-load />
+      <view class="product-body">
+        <text class="product-name">{{item.name}}</text>
+        <text class="product-meta">{{item.scenic}} · {{item.condition}} · {{item.tag}}</text>
+        <text class="product-desc">{{item.description}}</text>
+        <view class="product-foot">
+          <view>
+            <text class="price">{{item.priceText}}</text>
+            <text class="price-origin">{{item.originalText}}</text>
+          </view>
+          <text class="muted tiny">{{item.freightText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 担保流程 -->
+  <view class="section">
+    <view class="section-head">
+      <view>
+        <text class="kicker">Escrow Flow</text>
+        <text class="h2">担保交易流程</text>
+      </view>
+    </view>
+    <view class="escrow" wx:for="{{escrow}}" wx:key="step">
+      <view class="escrow-step">{{item.step}}</view>
+      <view class="grow">
+        <text class="h3">{{item.title}}</text>
+        <text class="muted small escrow-desc">{{item.desc}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 景区底稿 -->
+  <view class="section">
+    <view class="section-head">
+      <view>
+        <text class="kicker">Culture Wall</text>
+        <text class="h2">8 个景区的文创资料</text>
+      </view>
+      <text class="muted small">点击进入集市</text>
+    </view>
+    <view class="scenic-card" wx:for="{{scenics}}" wx:key="id" data-scenic="{{item.id}}" bindtap="goScenic">
+      <view class="between">
+        <text class="h3">{{item.id}}</text>
+        <text class="tag tag-tea">热度 {{item.heat}}</text>
+      </view>
+      <text class="muted tiny">{{item.city}} · {{item.level}}</text>
+      <text class="muted small scenic-intro">{{item.intro}}</text>
+    </view>
+  </view>
+
+  <!-- 合规 -->
+  <view class="section">
+    <view class="section-head">
+      <view>
+        <text class="kicker">Trust &amp; Compliance</text>
+        <text class="h2">平台保障与数据合规</text>
+      </view>
+    </view>
+    <view class="card">
+      <view class="list-row">
+        <text class="list-row-label">数据与隐私</text>
+        <text class="list-row-value">{{mode === 'online' ? '存于平台数据库' : '仅存本机'}}</text>
+      </view>
+      <view class="list-row">
+        <text class="list-row-label">内容安全</text>
+        <text class="list-row-value">敏感词过滤与人工审核</text>
+      </view>
+      <view class="list-row">
+        <text class="list-row-label">支付环节</text>
+        <text class="list-row-value">演示流程，未接入真实支付</text>
+      </view>
+      <view class="list-row" bindtap="goLegal">
+        <text class="list-row-label">用户协议与隐私说明</text>
+        <text class="list-row-value">查看 ›</text>
+      </view>
+    </view>
+    <view class="btn-row">
+      <button class="btn btn-ghost btn-mini" bindtap="toggleTheme">切换{{theme === 'dark' ? '月白' : '深色'}}主题</button>
+      <button class="btn btn-ghost btn-mini" bindtap="resetDemo">重置演示数据</button>
+    </view>
+  </view>
+
+  <view class="foot-note">
+    <text class="muted tiny">智价宝 v3.0 小程序版 · 与网页版共用同一套估价规则与交易流程</text>
+  </view>
+</view>

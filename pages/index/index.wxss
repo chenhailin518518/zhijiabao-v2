@@ -1,0 +1,172 @@
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 26rpx;
+}
+
+.hero-badge {
+  padding: 8rpx 20rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  background: rgba(247, 244, 236, 0.18);
+  color: #f7f4ec;
+}
+
+/* ============ 平台实时数据 ============ */
+.stat-row {
+  display: grid;
+  gap: 12rpx;
+}
+
+.stat-row + .stat-row {
+  margin-top: 12rpx;
+}
+
+.stat-row-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.stat-row-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.stat-value-line {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6rpx;
+}
+
+/* 评分卡：首屏的信任锚点，用茶棕从一排白卡里拎出来 */
+.stat-score {
+  background: linear-gradient(180deg, rgba(213, 189, 146, 0.24), rgba(213, 189, 146, 0.06));
+  border-color: rgba(171, 132, 91, 0.34);
+}
+
+.stat-score .stat-value {
+  font-size: 44rpx;
+  color: var(--tea);
+}
+
+.stat-star {
+  font-size: 24rpx;
+  color: var(--tea);
+}
+
+/* 零值指标：沉到背景里，别让首屏第一眼就撞见 0 */
+.stat-row-muted .stat {
+  background: transparent;
+  border-color: transparent;
+}
+
+.stat-blank .stat-value {
+  font-size: 32rpx;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.module {
+  position: relative;
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  border-radius: 22rpx;
+  padding: 28rpx;
+  box-shadow: var(--shadow);
+}
+
+.module + .module {
+  margin-top: 18rpx;
+}
+
+.module-head {
+  display: flex;
+  flex-direction: column;
+}
+
+.module-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.module-desc {
+  display: block;
+  margin-top: 12rpx;
+  font-size: 25rpx;
+  color: var(--muted);
+  line-height: 1.66;
+  padding-right: 100rpx;
+}
+
+.module-arrow {
+  position: absolute;
+  right: 28rpx;
+  bottom: 28rpx;
+  font-size: 24rpx;
+  color: var(--qingdai);
+}
+
+.chip {
+  padding: 12rpx 26rpx;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  color: var(--ink);
+}
+
+.escrow {
+  display: flex;
+  gap: 20rpx;
+  padding: 24rpx;
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  border-radius: 20rpx;
+}
+
+.escrow + .escrow {
+  margin-top: 16rpx;
+}
+
+.escrow-step {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(36, 72, 83, 0.08);
+  color: var(--qingdai);
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.escrow-desc {
+  display: block;
+  margin-top: 8rpx;
+  line-height: 1.6;
+}
+
+.scenic-card {
+  padding: 24rpx;
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  border-radius: 20rpx;
+}
+
+.scenic-card + .scenic-card {
+  margin-top: 16rpx;
+}
+
+.scenic-intro {
+  display: block;
+  margin-top: 10rpx;
+  line-height: 1.62;
+}
+
+.foot-note {
+  margin-top: 48rpx;
+  text-align: center;
+}

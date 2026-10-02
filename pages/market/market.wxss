@@ -1,0 +1,151 @@
+.head {
+  margin-bottom: 28rpx;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  height: 88rpx;
+  padding: 0 24rpx;
+  border-radius: 999rpx;
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.search-input {
+  flex: 1;
+  font-size: 27rpx;
+  color: var(--ink);
+}
+
+.search-clear {
+  padding: 0 16rpx;
+  color: var(--muted);
+  font-size: 26rpx;
+}
+
+.search-btn {
+  padding-left: 20rpx;
+  color: var(--qingdai);
+  font-size: 27rpx;
+  font-weight: 600;
+}
+
+.segments {
+  display: flex;
+  gap: 14rpx;
+  margin-top: 24rpx;
+}
+
+.segment {
+  flex: 1;
+  text-align: center;
+  padding: 16rpx 0;
+  border-radius: 16rpx;
+  font-size: 26rpx;
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+  color: var(--muted);
+}
+
+.segment-on {
+  background: var(--qingdai);
+  border-color: var(--qingdai);
+  color: #f7f4ec;
+  font-weight: 600;
+}
+
+.filters {
+  display: flex;
+  gap: 14rpx;
+  margin-top: 18rpx;
+}
+
+.filter {
+  flex: 1;
+  min-width: 0;
+}
+
+.filter-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 74rpx;
+  padding: 0 18rpx;
+  border-radius: 16rpx;
+  background: var(--surface);
+  border: 1rpx solid var(--line);
+}
+
+.filter-text {
+  font-size: 24rpx;
+  color: var(--muted);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.filter-on {
+  color: var(--qingdai);
+  font-weight: 600;
+}
+
+.filter-arrow {
+  font-size: 20rpx;
+  color: var(--muted);
+  margin-left: 6rpx;
+}
+
+.result-bar {
+  margin: 26rpx 0 18rpx;
+}
+
+.sort-text {
+  font-size: 24rpx;
+  color: var(--qingdai);
+}
+
+.mine-tags {
+  margin-top: 10rpx;
+}
+
+.load-more {
+  padding: 36rpx 0 12rpx;
+  text-align: center;
+}
+
+.mine-row {
+  display: flex;
+  gap: 20rpx;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid var(--line);
+}
+
+.mine-row:last-child {
+  border-bottom: none;
+}
+
+.mine-thumb {
+  width: 130rpx;
+  height: 130rpx;
+  border-radius: 14rpx;
+  background: var(--moon-2);
+  flex-shrink: 0;
+}
+
+.reject {
+  display: block;
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: var(--cinnabar);
+}
+
+.btn-danger-ghost {
+  border-color: var(--cinnabar);
+  color: var(--cinnabar);
+}
+
+.publish-bar {
+  margin-top: 40rpx;
+}

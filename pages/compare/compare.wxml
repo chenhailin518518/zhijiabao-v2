@@ -1,0 +1,150 @@
+<view class="page {{theme === 'dark' ? 'theme-dark' : ''}}">
+
+  <view class="head">
+    <text class="kicker">Price Radar</text>
+    <text class="h1">全网比价，判断文创合理价位</text>
+    <text class="lead">三价对照：景区官方指导价（正品渠道，价格最高）、二手成交参考价（约为当前售价的 94%）、智价宝建议价。价格走势为按商品基准价确定性生成的演示数据，已在图表上标注；页面提供电商与二手平台的同款检索入口，便于人工核对。</text>
+  </view>
+
+  <!-- 搜索 -->
+  <view class="search-box">
+    <input
+      class="search-input"
+      value="{{keyword}}"
+      maxlength="40"
+      placeholder="搜索文创名称、景区或关键词"
+      confirm-type="search"
+      bindinput="onKeywordInput"
+      bindconfirm="onSearch"
+    />
+    <text wx:if="{{keyword}}" class="search-clear" bindtap="clearKeyword">✕</text>
+    <text class="search-btn" bindtap="onSearch">搜索</text>
+  </view>
+
+  <!-- 筛选 -->
+  <view class="filters">
+    <picker class="filter" mode="selector" range="{{scenicRange}}" value="{{scenicIndex}}" bindchange="onScenicChange">
+      <view class="filter-inner">
+        <text class="filter-text {{scenicIndex > 0 ? 'filter-on' : ''}}">{{scenicRange[scenicIndex]}}</text>
+        <text class="filter-arrow">▾</text>
+      </view>
+    </picker>
+    <picker class="filter" mode="selector" range="{{categoryRange}}" value="{{categoryIndex}}" bindchange="onCategoryChange">
+      <view class="filter-inner">
+        <text class="filter-text {{categoryIndex > 0 ? 'filter-on' : ''}}">{{categoryRange[categoryIndex]}}</text>
+        <text class="filter-arrow">▾</text>
+      </view>
+    </picker>
+    <picker class="filter" mode="selector" range="{{sortRange}}" value="{{sortIndex}}" bindchange="onSortChange">
+      <view class="filter-inner">
+        <text class="filter-text filter-on">{{sortRange[sortIndex]}}</text>
+        <text class="filter-arrow">▾</text>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 价格上限 -->
+  <view class="card range-card">
+    <view class="between">
+      <text class="strong">价格筛选</text>
+      <text class="range-value">¥{{priceLimit}} 以下</text>
+    </view>
+    <slider
+      class="range-slider"
+      min="{{priceMin}}"
+      max="{{priceMax}}"
+      value="{{priceLimit}}"
+      step="5"
+      block-size="22"
+      activeColor="#244853"
+      backgroundColor="#eee8da"
+      bindchanging="onPriceChanging"
+      bindchange="onPriceEnd"
+    />
+    <view class="between">
+      <text class="muted tiny">¥{{priceMin}}</text>
+      <text class="muted tiny">¥{{priceMax}}</text>
+    </view>
+  </view>
+
+  <!-- 搜索历史 -->
+  <view class="history">
+    <block wx:if="{{searchHistory.length}}">
+      <text class="muted small">最近搜索：</text>
+      <text
+        class="chip"
+        wx:for="{{searchHistory}}"
+        wx:key="*this"
+        data-kw="{{item}}"
+        bindtap="useHistory"
+      >{{item}}</text>
+      <text class="link-btn" bindtap="clearHistory">清空</text>
+    </block>
+    <text wx:else class="muted small">搜索关键词会记录在账号中，便于下次比价</text>
+  </view>
+
+  <!-- 平台入口 -->
+  <view class="platform-row">
+    <text class="muted small">价格来源与同款检索：</text>
+    <text
+      class="chip chip-platform"
+      wx:for="{{platforms}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onPlatform"
+    >{{item.label}}</text>
+  </view>
+
+  <!-- 列表 -->
+  <view wx:if="{{loading}}" class="loading-tip">正在加载比价数据…</view>
+
+  <view wx:elif="{{list.length === 0}}" class="empty">
+    <text class="empty-mark">◇</text>
+    <text>没有符合条件的商品</text>
+    <text class="muted small">可放宽价格上限或重置筛选条件</text>
+    <view class="btn-row btn-row-center">
+      <button class="btn btn-ghost btn-mini" bindtap="resetFilter">重置筛选</button>
+    </view>
+  </view>
+
+  <view wx:else>
+    <view class="between result-bar">
+      <text class="muted small">共 {{total}} 件可比价商品</text>
+      <text class="sort-text" bindtap="resetFilter">重置</text>
+    </view>
+
+    <view class="product" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="goProduct">
+      <image class="product-thumb" src="{{item.cover}}" mode="aspectFill" lazy-load />
+      <view class="product-body">
+        <text class="product-name">{{item.name}}</text>
+        <text class="product-meta">{{item.scenic}} · {{item.category}} · {{item.condition}}</text>
+
+        <!-- 三价对照 -->
+        <view class="compare-box">
+          <view class="source-row">
+            <text class="source-label">官方指导价</text>
+            <text class="source-value">¥{{item.official}}</text>
+          </view>
+          <view class="source-row">
+            <text class="source-label">二手成交参考</text>
+            <text class="source-value">¥{{item.secondhand}}</text>
+          </view>
+          <view class="source-row source-row-on">
+            <text class="source-label source-label-on">本平台建议价</text>
+            <text class="source-value source-value-on">¥{{item.price}}</text>
+          </view>
+          <text class="spread">{{item.spreadText}}</text>
+        </view>
+
+        <view class="source-links">
+          <text class="link-btn" catchtap="openLink" data-url="{{item.mallUrl}}">去电商查同款</text>
+          <text class="link-btn" catchtap="openLink" data-url="{{item.secondhandUrl}}">去二手平台查成交</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="foot-note">
+    <text class="muted tiny">比价数据由平台商品库与确定性演示序列生成，第三方平台仅提供关键词检索跳转，不做抓取。</text>
+  </view>
+</view>
